@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hinata Sborks</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            margin: 0;
+            padding: 15px;
+            padding-bottom: 95px;
+            text-align: center;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, #111111 0%, #000000 100%);
+            filter: blur(16px);
+            z-index: -1;
+        }
+        h1, h2, h3, p, span, div, button {
+            background: linear-gradient(270deg, #ffffff, #555555, #ffffff);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textFlow 6s ease infinite;
+        }
+        @keyframes textFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card, .profile-card {
+            background: #0a0a0a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        .card img {
+            width: 100%;
+            border-radius: 12px;
+            max-height: 180px;
+            object-fit: cover;
+        }
+        .tags-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+        .tag {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+        }
+        .tag-new {
+            border-color: #ffffff;
+        }
+              .btn {
+            display: block;
+            background: #ffffff !important;
+            -webkit-text-fill-color: #000000 !important;
+            color: #000000;
+            padding: 14px 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            margin: 0 auto 15px;
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 5px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 25px;
+        }
+        .stat-box {
+            background: #050505;
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 12px 5px;
+            border-radius: 12px;
+        }
+        .stat-val { font-size: 18px; font-weight: bold; display: block; }
+        .stat-lbl { font-size: 10px; font-weight: bold; display: block; margin-top: 5px; color: #555555; }
+        .nav-bar {
+            position: fixed;
+            bottom: 15px; left: 15px; right: 15px;
+            height: 65px;
+            background: #0a0a0a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            z-index: 9999;
+        }
+        .nav-item {
+            background: none;
+            border: none;
+            flex: 1;
+            height: 100%;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            height: 80%;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 style="margin-top: 10px; font-size: 24px;">ХИНАТА СБОРКС</h1>
+
+    <!-- ВКЛАДКА КАТАЛОГА -->
+    <div id="tab-catalog" class="tab-content active">
+        <p style="font-size: 13px; margin-bottom: 20px;">Выбирай лучшую сборку и скачивай в один клик</p>
+
+        <div class="card">
+            <img src="https://placeholder.com" alt="Скриншот">
+            <div class="tags-row">
+                <span class="tag">Полу сборка</span>
+                <span class="tag tag-new">NEW</span>
+            </div>
+            <h3 style="font-size: 18px; margin: 10px 0;">Зимняя Сборка (FPS UP)</h3>
+            <p style="font-size: 13px; margin: 0;">Красивые матовые текстуры снега, заменённые машины и сильный прирост FPS для слабых телефонов.</p>
+            <button class="btn" onclick="downloadMod('winter_mod')">Скачать</button>
+        </div>
+
+        <div class="card">
+            <img src="https://placeholder.com" alt="Скриншот">
+            <div class="tags-row">
+                <span class="tag">Фулл сборка</span>
+            </div>
+            <h3 style="font-size: 18px; margin: 10px 0;">Летний Вайб (Графика)</h3>
+            <p style="font-size: 13px; margin: 0;">Яркие сочные цвета, реалистичное небо и новые качественные звуки оружия/авто.</p>
+            <button class="btn" onclick="downloadMod('summer_mod')">Скачать</button>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА ПРОФИЛЯ -->
+    <div id="tab-profile" class="tab-content">
+        <p style="font-size: 13px; margin-bottom: 20px;">Твой приватный личный кабинет</p>
+        
+        <div class="profile-card">
+            <div class="profile-avatar" id="user-avatar">👤</div>
+            <h2 id="user-name" style="font-size: 22px; margin: 0 0 5px 0;">Загрузка...</h2>
+            <div id="user-tag" style="font-size: 14px; margin-bottom: 5px;">@username</div>
+            <div><span class="badge">Пользователь</span></div>
+            
+            <div class="stats-grid">
+                <div class="stat-box"><span class="stat-val">0</span><span class="stat-lbl">ЛАЙКОВ</span></div>
+                <div class="stat-box"><span class="stat-val">0</span><span class="stat-lbl">СКАЧИВАНИЙ</span></div>
+                <div class="stat-box"><span class="stat-val">2</span><span class="stat-lbl">СБОРОК</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="nav-bar">
+        <button class="nav-item active" id="btn-catalog" onclick="switchTab('catalog', this)">📁 Каталог</button>
+        <button class="nav-item" id="btn-profile" onclick="switchTab('profile', this)">👤 Профиль</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const user = tg.initDataUnsafe.user;
+            document.getElementById('user-name').innerText = user.first_name || "Игрок";
+            document.getElementById('user-tag').innerText = user.username ? '@' + user.username : 'Скрыт';
+            if(user.first_name) {
+                document.getElementById('user-avatar').innerText = user.first_name.charAt(0);
+            }
+        }
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function downloadMod(modId) {
+            window.location.href = "https://t.me" + modId;
+        }
+    </script>
+</body>
+</html>
