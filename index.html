@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hinata Sborks</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0d0e12;
+            color: #ffffff;
+            margin: 0;
+            padding: 15px;
+            padding-bottom: 95px;
+            text-align: center;
+        }
+        h1, .nav-item.active { 
+            font-size: 26px; 
+            text-transform: uppercase;
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(270deg, #ffffff, #666a73, #ffffff);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientMove 6s ease infinite;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card, .profile-card {
+            background: rgba(30, 32, 38, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 16px;
+            padding: 1px;
+            background: linear-gradient(270deg, rgba(255,255,255,0.2), rgba(255,255,255,0.02), rgba(255,255,255,0.2));
+            background-size: 400% 400%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: gradientMove 6s ease infinite;
+        }
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+            max-height: 180px;
+            object-fit: cover;
+            filter: grayscale(30%);
+        }
+        .tags-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+        .tag {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+        }
+        .tag-new {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+        }
+        .card h3 {
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+            margin: 10px 0 8px;
+        }
+        .card p {
+            font-size: 13px;
+            color: #a0a5b0;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+              .btn {
+            display: block;
+            background: linear-gradient(270deg, #ffffff, #989da6, #ffffff);
+            background-size: 400% 400%;
+            color: #000000;
+            padding: 14px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 15px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: gradientMove 6s ease infinite;
+            transition: transform 0.2s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .nav-bar {
+            position: fixed;
+            bottom: 15px; left: 15px; right: 15px;
+            height: 65px;
+            background: #15171e;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            z-index: 9999;
+        }
+        .nav-item {
+            color: #555961;
+            background: none;
+            border: none;
+            flex: 1;
+            height: 100%;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            height: 80%;
+            margin: 0 5px;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 6px rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Hinata Sborks</h1>
+
+    <!-- ВКЛАДКА КАТАЛОГА -->
+    <div id="tab-catalog" class="tab-content active">
+        <p style="color: #6c727f; margin-bottom: 25px;">Выбирай лучшую сборку и скачивай в один клик</p>
+
+        <!-- СБОРКА 1 -->
+        <div class="card">
+            <img src="https://placeholder.com" alt="Скриншот">
+            <div class="tags-row">
+                <span class="tag">Полу сборка</span>
+                <span class="tag tag-new">NEW</span>
+            </div>
+            <h3>❄️ Зимняя Сборка (FPS UP)</h3>
+            <p>Красивые матовые текстуры снега, заменённые машины и сильный прирост FPS для слабых телефонов.</p>
+            <button class="btn" onclick="downloadMod('winter_mod')">Скачать</button>
+        </div>
+
+        <!-- СБОРКА 2 -->
+        <div class="card">
+            <img src="https://placeholder.com" alt="Скриншот">
+            <div class="tags-row">
+                <span class="tag">Фулл сборка</span>
+            </div>
+            <h3>🔥 Летний Вайб (Графика)</h3>
+            <p>Яркие сочные цвета, реалистичное небо и новые качественные звуки оружия/авто.</p>
+            <button class="btn" onclick="downloadMod('summer_mod')">Скачать</button>
+        </div>
+    </div>
+
+    <!-- ВКЛАДКА ПРОФИЛЯ -->
+    <div id="tab-profile" class="tab-content">
+        <p style="color: #6c727f; margin-bottom: 25px;">Твой приватный личный кабинет</p>
+        <div class="profile-card">
+            <h2 style="margin: 0 0 10px 0; font-weight: 900; letter-spacing: 1px;">ПРОФИЛЬ ИГРОКА</h2>
+            <p style="font-size: 16px; margin: 10px 0;">Статус: Active</p>
+            <p style="font-size: 13px; color: #a0a5b0;">Добро пожаловать в Hinata Sborks</p>
+        </div>
+    </div>
+
+    <!-- НИЖНЕЕ ЗАКРУГЛЕННОЕ МЕНЮ -->
+    <div class="nav-bar">
+        <button class="nav-item active" id="btn-catalog" onclick="switchTab('catalog', this)">📁 Каталог</button>
+        <button class="nav-item" id="btn-profile" onclick="switchTab('profile', this)">👤 Профиль</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('tab-' + tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function downloadMod(modId) {
+            window.location.href = "https://t.me" + modId;
+        }
+    </script>
+</body>
+</html>
