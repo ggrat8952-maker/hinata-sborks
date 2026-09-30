@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hinata Sborks</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #000000;
+            margin: 0;
+            padding: 15px;
+            padding-bottom: 100px;
+            text-align: center;
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, #0a0b0e 0%, #000000 100%);
+            filter: blur(16px);
+            z-index: -1;
+        }
+        .flow-text {
+            background: linear-gradient(270deg, #ffffff, #555555, #ffffff);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textFlow 6s ease infinite;
+            display: inline-block;
+        }
+        @keyframes textFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5px;
+            margin-bottom: 15px;
+        }
+        .logo-title {
+            font-size: 22px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        .update-btn-wrapper {
+            position: relative;
+        }
+        .update-btn {
+            background: #111111;
+            border: 1px solid #333333;
+            color: #ffffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .update-badge {
+            position: absolute;
+            top: -5px; right: -5px;
+            background: #ffffff;
+            color: #000000;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 10px;
+            border: 1px solid #000000;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .card, .profile-card, .admin-card {
+            background: #060709;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            text-align: left;
+        }
+        .card h3 { margin: 10px 0 5px 0; font-size: 18px; color: #fff; }
+        .card p { font-size: 13px; color: #888888; margin: 0; line-height: 1.4; }
+        .card img { width: 100%; border-radius: 12px; max-height: 160px; object-fit: cover; }
+        .tags-row { display: flex; gap: 6px; margin-top: 10px; }
+        .tag {
+            font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 5px;
+            text-transform: uppercase; border: 1px solid #333; color: #aaa; background: #111;
+        }
+        .tag-new { border-color: #fff; color: #fff; }
+        .btn {
+            display: block; background: #ffffff; color: #000000; padding: 12px;
+            border-radius: 12px; text-decoration: none; font-weight: bold; margin-top: 15px;
+            border: none; cursor: pointer; font-size: 14px; text-transform: uppercase;
+            letter-spacing: 0.5px; width: 100%; box-sizing: border-box; text-align: center;
+        }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: #0d0e12; border: 1px solid #333; border-radius: 20px;
+            padding: 25px; width: 100%; max-width: 400px; text-align: left; position: relative;
+        }
+        .modal-close {
+            position: absolute; top: 15px; right: 15px; background: none; border: none;
+            color: #aaa; font-size: 20px; cursor: pointer;
+        }
+              .profile-card { text-align: center; background: radial-gradient(circle at top, #0f1115 0%, #060709 100%); }
+        .profile-avatar { width: 85px; height: 85px; border-radius: 50%; background: #111; margin: 0 auto 12px; border: 2px solid #333; display: flex; align-items: center; justify-content: center; font-size: 32px; overflow: hidden; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-name { font-size: 20px; font-weight: bold; margin: 0 0 2px 0; color: #fff; }
+        .profile-tag { font-size: 13px; color: #666; margin-bottom: 12px; }
+        .role-badge { display: inline-block; padding: 4px 12px; border-radius: 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .role-player { color: #00ff66; border: 1px solid #00ff66; text-shadow: 0 0 8px rgba(0,255,102,0.4); }
+        .role-owner {
+            background: linear-gradient(270deg, #b172ff, #440099, #b172ff); background-size: 400% 400%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: gradientMove 6s ease infinite; border: 1px solid #b172ff;
+            box-shadow: inset 0 0 5px rgba(177,114,255,0.3);
+        }
+        .stats-box-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+        .p-stat-box { background: #000; border: 1px solid #222; padding: 10px 5px; border-radius: 12px; text-align: center; }
+        .p-stat-val { font-size: 16px; font-weight: bold; color: #fff; }
+        .p-stat-lbl { font-size: 9px; color: #555; font-weight: bold; margin-top: 3px; display: block; }
+        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #000; border: 1px solid #222; border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
+        .user-item-info { font-size: 14px; font-weight: bold; color: #fff; }
+        .user-item-stats { font-size: 11px; color: #666; }
+        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 65px; background: #060709; border: 1px solid #222222; border-radius: 20px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; }
+        .nav-item { color: #555; background: none; border: none; flex: 1; height: 100%; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+        .nav-item.active { color: #ffffff !important; background: rgba(255,255,255,0.03); border-radius: 18px; height: 85%; margin: 0 4px; }
+        .admin-only { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- ОКНО ОБНОВЛЕНИЙ -->
+    <div id="update-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeUpdates()">×</button>
+            <h3 style="margin-top:0;" class="flow-text">Обновления сайта</h3>
+            <p style="color:#fff; font-size:14px; margin-bottom:10px;">Что изменилось:</p>
+            <div style="font-size:13px; color:#aaa; line-height:1.5;">
+                • Добавлена кнопка списка обновлений сайта<br>
+                • Полностью переработан и пофиксен дизайн меню<br>
+                • Добавлен скрытый раздел управления сайтом для создателя<br>
+                • Пофиксен баг с размером шрифтов при кликах
+            </div>
+        </div>
+    </div>
+
+    <!-- ШАПКА -->
+    <div class="header-row">
+        <h1 class="logo-title flow-text">Hinata Sborks</h1>
+        <div class="update-btn-wrapper">
+            <button class="update-btn" onclick="openUpdates()">❓</button>
+            <div class="update-badge" id="up-badge">1</div>
+        </div>
+    </div>
+
+    <!-- КАТАЛОГ -->
+    <div id="tab-catalog" class="tab-content active">
+        <div class="card">
+            <img src="https://placeholder.com" alt="Скриншот">
+            <div class="tags-row"><span class="tag">Полу сборка</span><span class="tag tag-new">NEW</span></div>
+            <h3>❄️ Зимняя Сборка (FPS UP)</h3>
+            <p>Красивые матовые текстуры снега, заменённые машины и сильный прирост FPS для слабых телефонов.</p>
+            <button class="btn" onclick="downloadMod('winter_mod')">Скачать</button>
+        </div>
+    </div>
+
+    <!-- ПРОФИЛЬ -->
+    <div id="tab-profile" class="tab-content">
+        <div class="profile-card">
+            <div class="profile-avatar" id="user-avatar">👤</div>
+            <div class="profile-name" id="user-name">Загрузка...</div>
+            <div class="profile-tag" id="user-tag">@username</div>
+            <div id="role-container"><span class="role-badge role-player" id="role-text">Игрок</span></div>
+            <div class="stats-box-row">
+                <div class="p-stat-box"><span class="p-stat-val">0</span><span class="p-stat-lbl">ЛАЙКОВ</span></div>
+                <div class="p-stat-box"><span class="p-stat-val" id="user-downloads">0</span><span class="p-stat-lbl">СКАЧИВАНИЙ</span></div>
+                <div class="p-stat-box"><span class="p-stat-val">2</span><span class="p-stat-lbl">СБОРОК</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- АДМИН-ПАНЕЛЬ -->
+    <div id="tab-admin" class="tab-content">
+        <div class="admin-card">
+            <h3 class="flow-text" style="margin-top:0;">Статистика Hinata Sborks</h3>
+            <p style="color:#fff; margin-bottom:5px;">Онлайн сайта: <span style="color:#00ff66; font-weight:bold;">1</span></p>
+            <p style="color:#fff; margin-bottom:5px;">Всего скачиваний: <span style="font-weight:bold; color:#fff;">1,420</span></p>
+            <p style="color:#fff;">Популярная сборка: <span style="color:#b172ff; font-weight:bold;">Winter Mod</span></p>
+        </div>
+        <h3 class="flow-text" style="font-size:16px; margin-left:5px;">Управление игроками</h3>
+        <div id="users-list">
+            <div class="user-item" onclick="manageUser('cremles', 'Игрок', 6, 0)">
+                <div>
+                    <div class="user-item-info">cremles (Игрок)</div>
+                    <div class="user-item-stats">Скачал: 6 | Лайков: 0</div>
+                </div>
+                <span style="color:#666;">➔</span>
+            </div>
+            <div class="user-item" onclick="manageUser('br_player', 'Игрок', 2, 1)">
+                <div>
+                    <div class="user-item-info">br_player (Игрок)</div>
+                    <div class="user-item-stats">Скачал: 2 | Лайков: 1</div>
+                </div>
+                <span style="color:#666;">➔</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- НИЖНЕЕ МЕНЮ -->
+    <div class="nav-bar">
+        <button class="nav-item active" id="nav-catalog" onclick="switchTab('catalog')">📁<span style="background:none;-webkit-text-fill-color:#888;">Каталог</span></button>
+        <button class="nav-item" id="nav-profile" onclick="switchTab('profile')">👤<span style="background:none;-webkit-text-fill-color:#888;">Профиль</span></button>
+        <button class="nav-item admin-only" id="nav-admin" onclick="switchTab('admin')">⚙️<span style="background:none;-webkit-text-fill-color:#888;">Админ</span></button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const MY_TELEGRAM_ID = 123456789; // СЮДА ВСТАВЬ СВОЙ РЕАЛЬНЫЙ ТГ ID ЧТОБЫ КНОПКА АДМИНА КРОМЕ ТЕБЯ НИКТО НЕ ВИДЕЛ
+
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const user = tg.initDataUnsafe.user;
+            document.getElementById('user-name').innerText = user.first_name || "Игрок";
+            document.getElementById('user-tag').innerText = user.username ? '@' + user.username : '@hidden';
+            
+            if (user.id === MY_TELEGRAM_ID || user.username === "ggrat8952") { 
+                const rc = document.getElementById('role-container');
+                rc.innerHTML = '<span class="role-badge role-owner">Владелец</span>';
+                document.getElementById('nav-admin').style.display = 'flex';
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('active');
+        }
+        function openUpdates() { document.getElementById('update-modal').style.display = 'flex'; document.getElementById('up-badge').style.display = 'none'; }
+        function closeUpdates() { document.getElementById('update-modal').style.display = 'none'; }
+        function downloadMod(modId) { window.location.href = "https://t.me" + modId; }
+        function manageUser(name, role, dl, likes) {
+            tg.showPopup({
+                title: 'Управление: ' + name,
+                message: 'Роль: ' + role + '\nСкачал сборок: ' + dl + '\nПоставил лайков: ' + likes,
+                buttons: [
+                    {id: 'adm', type: 'default', text: 'Выдать админку'},
+                    {id: 'cancel', type: 'cancel', text: 'Закрыть'}
+                ]
+            }, (buttonId) => {
+                if(buttonId === 'adm') tg.showAlert('Админка успешно выдана игроку ' + name + '!');
+            });
+        }
+    </script>
+</body>
+</html>
