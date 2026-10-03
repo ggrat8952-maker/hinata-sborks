@@ -1,1 +1,387 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hinata Sborks</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #000000, #111115, #000000);
+            --text-gradient: linear-gradient(270deg, #ffffff, #555555, #ffffff);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --tag-color: #aaa;
+            --role-color: #00ff66;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --btn-text-color: #000000;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0; padding: 15px; padding-bottom: 100px;
+            text-align: center; color: #ffffff; overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            background: var(--bg-gradient); background-size: 400% 400% !important;
+            animation: bgFlow 8s ease infinite; position: relative;
+        }
+              @keyframes bgFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .stars-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: -1; overflow: hidden;
+        }
+        .star {
+            position: absolute; background: #ffffff; border-radius: 50%;
+            animation: blink linear infinite; box-shadow: 0 0 4px #ffffff;
+        }
+        @keyframes blink { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+        
+        .flow-text { background: var(--text-gradient); background-size: 400% 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: textFlow 6s ease infinite; display: inline-block; }
+        @keyframes textFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+              .auth-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000000; z-index: 20000; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .auth-card { background: #0d0e12; border: 1px solid var(--border-color); border-radius: 28px; padding: 30px 20px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+        .auth-input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: #fff; font-size: 14px; outline: none; margin-bottom: 15px; box-sizing: border-box; text-align: center; }
+        .file-upload-btn { background: #111115; border: 1px solid var(--border-color); color: #888; padding: 12px; border-radius: 12px; font-size: 13px; font-weight: bold; cursor: pointer; display: block; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
+        .auth-avatar-preview { width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--border-color); margin: 0 auto 15px; display: none; object-fit: cover; }
+             .header-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; margin-bottom: 10px; }
+        .logo-title { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
+        .version-text { font-size: 11px; color: rgba(255,255,255,0.2); font-weight: bold; text-align: right; padding-right: 8px; margin-bottom: 10px; display: block; }
+        .update-btn-wrapper { position: relative; }
+        .update-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: #ffffff; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .update-badge { position: absolute; top: -5px; right: -5px; background: #ffffff; color: #000000; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
+        
+        .search-container { display: flex; gap: 10px; margin-bottom: 12px; padding: 0 5px; }
+        .search-input { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; color: #fff; font-size: 14px; outline: none; }
+        .filter-select { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 0 15px; color: #fff; font-size: 14px; outline: none; }
+        .categories-row { display: flex; gap: 8px; overflow-x: auto; padding: 5px; margin-bottom: 15px; }
+        .categories-row::-webkit-scrollbar { display: none; }
+        .cat-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: #88888c; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; border: none; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+        .cat-btn.active { background: #ffffff; color: #000000; border-color: #ffffff; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+              .theme-circle-grid { display: flex; justify-content: center; gap: 15px; margin-top: 10px; margin-bottom: 15px; }
+        .circle-t-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); cursor: pointer; transition: transform 0.2s; }
+        .circle-t-btn:active { transform: scale(0.85); }
+        .c-btn-mono { background: #ffffff; }
+        .c-btn-purple { background: linear-gradient(135deg, #b172ff, #440099); border-color: #b172ff; }
+        .c-btn-emerald { background: linear-gradient(135deg, #00ff66, #006622); border-color: #00ff66; }
+        .c-btn-fire { background: linear-gradient(135deg, #ff3737, #800000); border-color: #ff3737; }
+        .c-btn-custom { background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red); }
 
+        .card { background: rgba(20, 20, 25, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--border-color); border-radius: 24px; padding: 16px; margin-bottom: 20px; box-shadow: 0 12px 32px var(--shadow-color); text-align: left; position: relative; }
+        .img-wrapper { position: relative; width: 100%; border-radius: 16px; overflow: hidden; }
+        .card img { width: 100%; display: block; max-height: 180px; object-fit: cover; }
+        .tags-row { display: flex; gap: 6px; margin-top: 12px; margin-bottom: 12px; align-items: center; }
+        .tag { font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; border: 1px solid var(--border-color); color: var(--tag-color); background: rgba(0,0,0,0.3); }
+        .tag-new { background: #ffffff; color: #000000; border-color: #ffffff; }
+        .purple-active .tag-new { background: #b172ff; color: #ffffff; border-color: #b172ff; }
+        .author-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .author-info { display: flex; align-items: center; gap: 8px; }
+              .author-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--text-gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--btn-text-color); font-size: 12px; box-shadow: 0 0 10px var(--shadow-color); }
+        .author-name { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; }
+        .prefix-tag { font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 8px; text-transform: uppercase; border: 1px solid var(--border-color); color: #aaa; background: rgba(0,0,0,0.3); }
+        .card h3 { margin: 8px 0 6px 0; font-size: 16px; font-weight: 800; color: #fff; text-transform: uppercase; }
+        .card p { font-size: 12px; color: #737780; margin: 0 0 15px 0; line-height: 1.4; }
+        .stats-row { display: flex; gap: 15px; margin-bottom: 12px; padding-left: 2px; }
+        .stat-item { font-size: 13px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+        .btn { display: block; padding: 14px; border-radius: 16px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; font-size: 14px; letter-spacing: 0.5px; width: 100%; box-sizing: border-box; text-align: center; background: var(--text-gradient); background-size: 400% 400%; color: var(--btn-text-color); animation: gradientMove 6s ease infinite; transition: transform 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #0d0e12; border: 1px solid #333; border-radius: 20px; padding: 25px; width: 100%; max-width: 400px; text-align: left; position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 15px; background: none; border: none; color: #aaa; font-size: 20px; cursor: pointer; }
+        
+        .profile-card { text-align: center; background: rgba(20, 20, 25, 0.4); border: 1px solid var(--border-color); border-radius: 24px; padding: 30px 20px; }
+        .profile-avatar { width: 85px; height: 85px; border-radius: 50%; border: 2px solid var(--border-color); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; box-shadow: 0 0 25px var(--shadow-color); overflow: hidden; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-name { font-size: 22px; font-weight: bold; margin: 0 0 2px 0; color: #fff; }
+        .profile-tag { font-size: 13px; color: #555; margin-bottom: 15px; }
+        .role-badge { display: inline-block; padding: 5px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: var(--role-color); border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); }
+        .role-owner { background: linear-gradient(270deg, #b172ff, #440099, #b172ff); background-size: 400% 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: textFlow 6s ease infinite; border: 1px solid #b172ff; text-shadow: 0 0 8px rgba(177,114,255,0.3); }
+        
+        .custom-design-box { margin-top: 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); padding: 15px; border-radius: 16px; text-align: left; }
+        .design-title { font-size: 12px; font-weight: bold; color: rgba(255,255,255,0.3); text-transform: uppercase; display: block; margin-bottom: 10px; }
+        .hud-picker-container { display: flex; flex-direction: column; align-items: center; gap: 10px; background: #07080c; border: 1px solid rgba(255,255,255,0.03); border-radius: 14px; padding: 15px; }
+        .color-wheel { width: 150px; height: 140px; border-radius: 50%; background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red); cursor: pointer; border: 2px solid rgba(255,255,255,0.1); position: relative; }
+        .color-wheel-pointer { width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 2px solid #000; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+        .brightness-slider-row { width: 100%; text-align: left; margin-top: 5px; }
+        .brightness-slider-lbl { font-size: 11px; color: #555; font-weight: bold; margin-bottom: 4px; display: block; }
+        .brightness-slider { width: 100%; -webkit-appearance: none; background: #1a1a24; height: 6px; border-radius: 5px; outline: none; }
+        .brightness-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; }
+        
+        .stats-list-vertical { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; text-align: left; }
+        .stat-line-item { background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .stat-line-lbl { font-size: 13px; color: #666; font-weight: bold; letter-spacing: 0.5px; }
+        .stat-line-val { font-size: 16px; font-weight: bold; color: #fff; }
+        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 65px; background: rgba(15, 15, 20, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 20px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 10px 30px var(--shadow-color); }
+        .nav-item { color: #555; background: none; border: none; flex: 1; height: 100%; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+        .nav-item.active { color: #ffffff !important; background: rgba(255,255,255,0.03); border-radius: 18px; height: 85%; margin: 0 4px; border: 1px solid var(--border-color); }
+        .admin-card { background: rgba(20, 20, 25, 0.5); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 32px var(--shadow-color); text-align: left; }
+        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: #000; border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 8px; cursor: pointer; }
+        .user-item-info { font-size: 14px; font-weight: bold; color: #fff; }
+        .user-item-stats { font-size: 11px; color: #666; }
+        .admin-only { display: none; }
+    </style>
+</head>
+<body>
+    <div class="stars-container" id="stars-box"></div>
+        <!-- О К Н О   В Х О Д А -->
+    <div class="auth-screen" id="app-auth-screen">
+        <div class="auth-card">
+            <h2 class="flow-text" style="margin-top:0; font-size:24px; font-weight:900;">ВОЙТИ НА САЙТ</h2>
+            <p style="font-size:12px; color:#666; margin-bottom:20px; margin-top:0;">Настройте свой игровой кастомный профиль</p>
+            
+            <img class="auth-avatar-preview" id="auth-avatar-preview-img" src="">
+            <button class="file-upload-btn" onclick="document.getElementById('avatar-file-input').click()" type="button">📁 Выбрать аватар из галереи</button>
+            <input type="file" id="avatar-file-input" style="display:none;" accept="image/*" onchange="previewAvatar(this)">
+            
+            <input type="text" id="auth-input-nick" class="auth-input" placeholder="Введите ваш игровой Ник">
+            <input type="text" id="auth-input-tag" class="auth-input" placeholder="Ваш @username из Telegram">
+            
+            <button class="btn" style="margin-top:10px;" onclick="submitAuth()" type="button">Войти</button>
+        </div>
+    </div>
+
+    <div id="update-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="document.getElementById('update-modal').style.display='none'" ontouchstart="document.getElementById('update-modal').style.display='none'">×</button>
+            <h3 style="margin-top:0;" class="flow-text">ОБНОВЛЕНИЯ HINATA SBORKS</h3>
+            <div style="font-size:13px; color:#aaa; line-height:1.6;">
+                • Запущена ультимативная кастомная регистрация профилей v1.1350!<br>
+                • Добавлена загрузка любых аватарок напрямую из галереи телефона<br>
+                • Железная выдача прав Владельца и Админки по вбитому нику/тегу<br>
+                • Внедрены круглые сочные кнопки быстрого выбора дизайна
+            </div>
+        </div>
+    </div>
+    <div class="header-row">
+        <h1 class="logo-title flow-text">Hinata Sborks</h1>
+        <div class="update-btn-wrapper"><button class="update-btn" onclick="document.getElementById('update-modal').style.display='flex';document.getElementById('up-badge').style.display='none'" ontouchstart="document.getElementById('update-modal').style.display='flex';document.getElementById('up-badge').style.display='none'">❓</button><div class="update-badge" id="up-badge">1</div></div>
+    </div>
+    <div class="version-text">ВЕРСИЯ САЙТА 1.1350</div>
+        <div id="tab-catalog" class="tab-content active">
+        <div class="search-container"><input type="text" class="search-input" id="search-box" placeholder="Поиск сборок..." oninput="filterSearch()"></div>
+        <div class="categories-row">
+            <button class="cat-btn active" id="cat-all" onclick="setCategory('all')" ontouchstart="setCategory('all')">Все</button>
+            <button class="cat-btn" id="cat-half" onclick="setCategory('half')" ontouchstart="setCategory('half')">ПолуСборки</button>
+            <button class="cat-btn" id="cat-full" onclick="setCategory('full')" ontouchstart="setCategory('full')">ФуллСборки</button>
+        </div>
+        
+        <div class="card mod-card" data-name="orange fanta assembly" data-type="half">
+            <div class="img-wrapper"><img src="https://placeholder.com" alt="Превью"></div>
+            <div class="tags-row"><span class="tag tag-new">NEW</span><span class="tag">Полу сборка</span></div>
+            <div class="author-row"><div class="author-info"><div class="author-avatar" style="background:#b172ff;">👑</div><div class="author-name">HINATA MAKER</div></div><div class="prefix-tag">ВЛАДЕЛЕЦ</div></div>
+            <h3>ORANGE FANTA ASSEMBLY</h3><p>Небо, прозрачные капты, лого, бомжиха(setskin-135)-кастом NIKE, шрифт, кровь, кастом дигл, звуки выстрела, звуки попадания.</p>
+            <div class="stats-row"><div class="stat-item" onclick="toggleLike(this, 'p-likes-1')" ontouchstart="toggleLike(this, 'p-likes-1')">❤️ <span id="p-likes-1">0</span></div><div class="stat-item">📥 0</div></div>
+            <button class="btn" onclick="downloadMod('orange_fanta')" ontouchstart="downloadMod('orange_fanta')">Скачать</button>
+        </div>
+        
+        <div class="card mod-card" data-name="kevin purple assembly" data-type="full">
+            <div class="img-wrapper"><img src="https://placeholder.com" alt="Превью"></div>
+            <div class="tags-row"><span class="tag tag-new">NEW</span><span class="tag">Фулл сборка</span></div>
+            <div class="author-row"><div class="author-info"><div class="author-avatar" style="background:#00ff66;">👤</div><div class="author-name">PHOENIX MODS</div></div><div class="prefix-tag">ИГРОК</div></div>
+            <h3>KEVIN PURPLE ASSEMBLY</h3><p>Эксклюзивное тёмное небо, кастомный фиолетовый интерфейс, замена всех скинов банд, новые звуки оружия и максимальный FPS UP.</p>
+            <div class="stats-row"><div class="stat-item" onclick="toggleLike(this, 'p-likes-2')" ontouchstart="toggleLike(this, 'p-likes-2')">❤️ <span id="p-likes-2">0</span></div><div class="stat-item">📥 0</div></div>
+            <button class="btn" onclick="downloadMod('kevin_purple')" ontouchstart="downloadMod('kevin_purple')">Скачать</button>
+        </div>
+        </div>
+           <div id="tab-profile" class="tab-content">
+        <div class="profile-card">
+            <div class="profile-avatar" id="user-avatar"><img src="" id="user-avatar-img" alt=""></div>
+            <div class="profile-name" id="user-name">Игрок</div>
+            <div class="profile-tag" id="user-tag">@username</div>
+            <div><span class="role-badge" id="role-text">Игрок</span></div>
+            
+            <div class="custom-design-box">
+                <span class="design-title">🎨 Кастом дизайн сайта</span>
+                <div class="theme-circle-grid">
+                    <button class="circle-t-btn c-btn-mono" onclick="changeTheme('mono')" ontouchstart="changeTheme('mono')"></button>
+                    <button class="circle-t-btn c-btn-purple" onclick="changeTheme('purple')" ontouchstart="changeTheme('purple')"></button>
+                    <button class="circle-t-btn c-btn-emerald" onclick="changeTheme('emerald')" ontouchstart="changeTheme('emerald')"></button>
+                    <button class="circle-t-btn c-btn-fire" onclick="changeTheme('fire')" ontouchstart="changeTheme('fire')"></button>
+                    <button class="circle-t-btn c-btn-custom" onclick="changeTheme('custom')" ontouchstart="changeTheme('custom')"></button>
+                </div>
+                
+                <div class="hud-picker-container" id="hud-color-picker-block" style="display:none;">
+                    <div class="color-wheel" id="wheel-element"><div class="color-wheel-pointer" id="wheel-pointer"></div></div>
+                    <div class="brightness-slider-row"><span class="brightness-slider-lbl">Яркость:</span><input type="range" id="brightness-slider-element" class="brightness-slider" min="10" max="100" value="100"></div>
+                </div>
+            </div>
+            <div class="stats-list-vertical">
+                <div class="stat-line-item"><span class="stat-line-lbl">❤️ Поставлено лайков</span><span class="stat-line-val" id="profile-likes-total">0</span></div>
+                <div class="stat-line-item"><span class="stat-line-lbl">📥 Успешных загрузок</span><span class="stat-line-val">0</span></div>
+                <div class="stat-line-item"><span class="stat-line-lbl">📁 Доступно сборок</span><span class="stat-line-val">2</span></div>
+            </div>
+        </div>
+           </div>
+      <div id="tab-admin" class="tab-content">
+        <div class="admin-card">
+            <h3 class="flow-text" style="margin-top:0;">Статистика Hinata Sborks</h3>
+            <p style="color:#fff; margin-bottom:5px;">Онлайн сайта: <span style="color:#00ff66; font-weight:bold;">1</span></p>
+            <p style="color:#fff; margin-bottom:5px;">Всего скачиваний: <span style="font-weight:bold; color:#fff;">1,420</span></p>
+            <p style="color:#fff;">Популярная сборка: <span style="color:#b172ff; font-weight:bold;">Kevin Purple</span></p>
+        </div>
+        <h3 class="flow-text" style="font-size:16px; margin-left:5px;">Управление игроками</h3>
+        <div id="users-list"><div class="user-item" onclick="manageUser()" ontouchstart="manageUser()"><div><div class="user-item-info">cremles (Игрок)</div><div class="user-item-stats">Скачал: 6 | Лайков: 0</div></div><span style="color:#666;">➔</span></div></div>
+    </div>
+
+    <div class="nav-bar">
+        <button class="nav-item active" id="nav-catalog" onclick="switchTab('catalog')" ontouchstart="switchTab('catalog')">📁<span>Каталог</span></button>
+        <button class="nav-item" id="nav-profile" onclick="switchTab('profile')" ontouchstart="switchTab('profile')">👤<span>Профиль</span></button>
+        <button class="nav-item admin-only" id="nav-admin" onclick="switchTab('admin')" ontouchstart="switchTab('admin')">⚙️<span>Админ</span></button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp; tg.expand();
+        let currentCategory = 'all'; let selectedHue = 0; let selectedSaturation = 100; let uploadedAvatarBase64 = "";
+
+        function createStars() {
+            const box = document.getElementById('stars-box');
+            for(let i=0; i<45; i++) {
+                let star = document.createElement('div'); star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px'; star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%';
+                star.style.animationDuration = Math.random() * 3 + 2 + 's'; box.appendChild(star);
+            }
+        }
+        createStars();
+              function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedAvatarBase64 = e.target.result;
+                    const preview = document.getElementById('auth-avatar-preview-img');
+                    preview.src = uploadedAvatarBase64; preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function submitAuth() {
+            let nick = document.getElementById('auth-input-nick').value.trim();
+            let tag = document.getElementById('auth-input-tag').value.trim();
+            if(nick === '') { tg.showAlert('Пожалуйста, введите ваш Ник!'); return; }
+            if(tag === '') { tg.showAlert('Пожалуйста, введите ваш @username!'); return; }
+            if(uploadedAvatarBase64 === '') { tg.showAlert('Пожалуйста, выберите аватар из галереи!'); return; }
+
+            if(!tag.startsWith('@')) tag = '@' + tag;
+
+            document.getElementById('user-name').innerText = nick;
+            document.getElementById('user-tag').innerText = tag;
+            document.getElementById('user-avatar-img').src = uploadedAvatarBase64;
+
+            let cleanTag = tag.replace('@', '').toLowerCase();
+            let cleanNick = nick.toLowerCase();
+            if(cleanTag === 'brtjla' || cleanNick === 'cremles' || cleanNick === '6439742946') {
+                document.getElementById('role-text').innerText = 'Владелец';
+                document.getElementById('role-text').className = 'role-badge role-owner';
+                document.getElementById('nav-admin').style.display = 'flex';
+            }
+
+            tg.showAlert(`Welcome! Hinata sborks`);
+            document.getElementById('app-auth-screen').style.display = 'none';
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('active');
+        }
+
+        function setCategory(cat) {
+            currentCategory = cat; document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('cat-' + cat).classList.add('active'); filterSearch();
+        }
+
+        function filterSearch() {
+            const query = document.getElementById('search-box').value.toLowerCase();
+            document.querySelectorAll('.mod-card').forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase(); const type = card.getAttribute('data-type');
+                const matchesSearch = name.includes(query); const matchesCategory = (currentCategory === 'all') || (type === currentCategory);
+                card.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
+            });
+        }
+
+        function toggleLike(btn, id) {
+            let span = document.getElementById(id); let count = parseInt(span.innerText); let total = document.getElementById('profile-likes-total');
+            if(!btn.classList.contains('liked')) {
+                btn.classList.add('liked'); btn.style.color = '#00ff66'; span.innerText = count + 1; total.innerText = parseInt(total.innerText) + 1;
+            } else {
+                btn.classList.remove('liked'); btn.style.color = '#fff'; span.innerText = count - 1; total.innerText = parseInt(total.innerText) - 1;
+            }
+        }
+
+        const wheel = document.getElementById('wheel-element'); const pointer = document.getElementById('wheel-pointer'); const slider = document.getElementById('brightness-slider-element');
+
+        function handleColorSelect(e) {
+            const rect = wheel.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            const x = clientX - rect.left - rect.width/2; const y = clientY - rect.top - rect.height/2;
+            let angle = Math.atan2(y, x) * (180 / Math.PI); if (angle < 0) angle += 360;
+            selectedHue = angle;
+            let pX = Math.max(0, Math.min(100, ((x + rect.width/2) / rect.width * 100)));
+            let pY = Math.max(0, Math.min(100, ((y + rect.height/2) / rect.height * 100)));
+            pointer.style.left = pX + '%'; pointer.style.top = pY + '%';
+            applyCustomColor();
+        }
+
+        wheel.addEventListener('click', handleColorSelect);
+        wheel.addEventListener('touchstart', handleColorSelect, {passive: true});
+        wheel.addEventListener('touchmove', (e) => { handleColorSelect(e); e.preventDefault(); }, {passive:false});
+        slider.addEventListener('input', applyCustomColor);
+
+        function applyCustomColor() {
+            const currentTheme = document.querySelector('.circle-t-btn.active-custom');
+            const br = slider.value; const root = document.documentElement;
+            const hslColor = `hsl(${selectedHue}, ${selectedSaturation}%, ${br/2}%)`; const hslText = `hsl(${selectedHue}, 100%, 75%)`;
+            root.style.setProperty('--bg-gradient', `linear-gradient(135deg, #000000, ${hslColor}, #000000)`);
+            root.style.setProperty('--text-gradient', `linear-gradient(270deg, #ffffff, ${hslText}, #ffffff)`);
+            root.style.setProperty('--border-color', `hsla(${selectedHue}, 100%, 70%, 0.25)`);
+            root.style.setProperty('--tag-color', hslText); root.style.setProperty('--role-color', hslText);
+            root.style.setProperty('--shadow-color', `hsla(${selectedHue}, 100%, 70%, 0.1)`);
+            root.style.setProperty('--btn-text-color', br < 50 ? '#ffffff' : '#000000');
+        }
+
+        function changeTheme(theme) {
+            const root = document.documentElement;
+            document.getElementById('hud-color-picker-block').style.display = (theme === 'custom') ? 'block' : 'none';
+            document.body.classList.remove('purple-active');
+            
+            if(theme === 'purple') {
+                document.body.classList.add('purple-active');
+                root.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #090015, #1c0035, #090015)');
+                root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #b172ff, #440099, #b172ff)');
+                root.style.setProperty('--border-color', 'rgba(177, 114, 255, 0.25)');
+                root.style.setProperty('--tag-color', '#b172ff'); root.style.setProperty('--role-color', '#b172ff');
+                root.style.setProperty('--shadow-color', 'rgba(177, 114, 255, 0.1)'); root.style.setProperty('--btn-text-color', '#ffffff');
+            } else if(theme === 'emerald') {
+                root.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #000c03, #002409, #000c03)');
+                root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #00ff66, #006622, #00ff66)');
+                root.style.setProperty('--border-color', 'rgba(0, 255, 102, 0.25)');
+                root.style.setProperty('--tag-color', '#00ff66'); root.style.setProperty('--role-color', '#00ff66');
+                root.style.setProperty('--shadow-color', 'rgba(0, 255, 102, 0.1)'); root.style.setProperty('--btn-text-color', '#000000');
+            } else if(theme === 'fire') {
+                root.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #100000, #360000, #100000)');
+                root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ff3737, #800000, #ff3737)');
+                root.style.setProperty('--border-color', 'rgba(255, 55, 55, 0.25)');
+                root.style.setProperty('--tag-color', '#ff3737'); root.style.setProperty('--role-color', '#ff3737');
+                root.style.setProperty('--shadow-color', 'rgba(255, 55, 55, 0.1)'); root.style.setProperty('--btn-text-color', '#ffffff');
+            } else if(theme === 'custom') { applyCustomColor(); } else {
+                root.style.setProperty('--bg-gradient', 'linear-gradient(135deg, #000000, #111115, #000000)');
+                root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffffff, #555555, #ffffff)');
+                root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.08)');
+                root.style.setProperty('--tag-color', '#aaa'); root.style.setProperty('--role-color', '#00ff66');
+                root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.5)'); root.style.setProperty('--btn-text-color', '#000000');
+            }
+        }
+        function downloadMod(modId) { window.location.href = "https://t.me" + modId; }
+        function manageUser() {
+            tg.showPopup({ title: 'Управление: cremles', message: 'Роль: Игрок\nСкачал сборок: 6\nПоставил лайков: 0', buttons: [{id: 'adm', type: 'default', text: 'Выдать админку'}, {id: 'cancel', type: 'cancel', text: 'Закрыть'}] }, (buttonId) => { if(buttonId === 'adm') tg.showAlert('Админка выдана!'); });
+        }
+    </script>
+</body>
+</html>
