@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hinata Sborks</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #050010, #111115, #050010);
+            --text-gradient: linear-gradient(270deg, #ffffff, #555555, #ffffff);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --tag-color: #aaa;
+            --role-color: #00ff66;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --btn-text-color: #000000;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0; padding: 15px; padding-bottom: 120px;
+            text-align: center; color: #ffffff; overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            background: var(--bg-gradient); background-size: 400% 400% !important;
+            animation: bgFlow 8s ease infinite; position: relative;
+        }
+        @keyframes bgFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+              .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
+        .star { position: absolute; background: #ffffff; border-radius: 50%; animation: blink linear infinite; box-shadow: 0 0 4px #ffffff; }
+        @keyframes blink { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+        
+        .flow-text { background: var(--text-gradient); background-size: 400% 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: textFlow 6s ease infinite; display: inline-block; }
+        @keyframes textFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .header-row { display: flex; justify-content: center; align-items: center; padding: 10px 5px; margin-bottom: 5px; }
+        .logo-title { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
+        .version-text { font-size: 11px; color: rgba(255,255,255,0.2); font-weight: bold; text-align: right; padding-right: 8px; margin-bottom: 15px; display: block; }
+
+        .search-container { display: flex; gap: 10px; margin-bottom: 12px; padding: 0 5px; }
+        .search-input { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 15px; color: #fff; font-size: 14px; outline: none; }
+        .categories-row { display: flex; gap: 10px; margin-bottom: 15px; padding: 0 5px; }
+        .cat-box-btn { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 15px; border-radius: 16px; font-weight: bold; font-size: 14px; cursor: pointer; color: #fff; transition: transform 0.2s; text-transform: uppercase; }
+        .cat-box-btn:active { transform: scale(0.95); }
+              .theme-circle-grid { display: flex; justify-content: center; gap: 15px; margin-top: 10px; margin-bottom: 15px; }
+        .circle-t-btn { width: 36px; height: 36px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); cursor: pointer; transition: transform 0.2s; }
+        .circle-t-btn:active { transform: scale(0.85); }
+        .c-btn-mono { background: #ffffff; }
+        .c-btn-purple { background: linear-gradient(135deg, #b172ff, #440099); border-color: #b172ff; }
+        .c-btn-emerald { background: linear-gradient(135deg, #00ff66, #006622); border-color: #00ff66; }
+        .c-btn-fire { background: linear-gradient(135deg, #ff3737, #800000); border-color: #ff3737; }
+
+        .custom-design-box { margin-top: 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); padding: 15px; border-radius: 16px; text-align: left; }
+        .design-title { font-size: 12px; font-weight: bold; color: rgba(255,255,255,0.3); text-transform: uppercase; display: block; margin-bottom: 10px; }
+        .brightness-slider-row { width: 100%; text-align: left; margin-top: 5px; }
+        .brightness-slider-lbl { font-size: 12px; color: rgba(255,255,255,0.4); font-weight: bold; margin-bottom: 6px; display: block; text-transform: uppercase; }
+        .brightness-slider { width: 100%; -webkit-appearance: none; background: #1a1a24; height: 6px; border-radius: 5px; outline: none; border: 1px solid rgba(255,255,255,0.05); }
+        .brightness-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 16px; border-radius: 4px; background: #fff; cursor: pointer; }
+              .card { background: rgba(20, 20, 25, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--border-color); border-radius: 24px; padding: 16px; margin-bottom: 20px; box-shadow: 0 12px 32px var(--shadow-color); text-align: left; position: relative; }
+        .img-wrapper { position: relative; width: 100%; border-radius: 16px; overflow: hidden; }
+        .card img { width: 100%; display: block; max-height: 180px; object-fit: cover; }
+        .tags-row { display: flex; gap: 6px; margin-top: 12px; margin-bottom: 12px; align-items: center; }
+        .tag { font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; border: 1px solid var(--border-color); color: var(--tag-color); background: rgba(0,0,0,0.3); }
+        .tag-new { background: #ffffff; color: #000000; border-color: #ffffff; }
+        .purple-active .tag-new { background: #b172ff; color: #ffffff; border-color: #b172ff; }
+        .author-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .author-info { display: flex; align-items: center; gap: 8px; }
+        .author-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--text-gradient); display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--btn-text-color); font-size: 12px; box-shadow: 0 0 10px var(--shadow-color); text-transform: uppercase; }
+        .author-name { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; }
+        .prefix-tag { font-size: 10px; font-weight: bold; padding: 4px 12px; border-radius: 8px; text-transform: uppercase; border: 1px solid var(--border-color); color: #aaa; background: rgba(0,0,0,0.3); }
+        .card h3 { margin: 8px 0 6px 0; font-size: 16px; font-weight: 800; color: #fff; text-transform: uppercase; }
+        .card p { font-size: 12px; color: #737780; margin: 0 0 15px 0; line-height: 1.4; }
+              .stats-row { display: flex; gap: 15px; margin-bottom: 12px; padding-left: 2px; }
+        .stat-item { font-size: 13px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+        .btn { display: block; padding: 14px; border-radius: 16px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; font-size: 14px; letter-spacing: 0.5px; width: 100%; box-sizing: border-box; text-align: center; background: var(--text-gradient); background-size: 400% 400%; color: var(--btn-text-color); animation: gradientMove 6s ease infinite; transition: transform 0.2s; }
+        .btn:active { transform: scale(0.98); }
+        
+        .profile-card { text-align: center; background: rgba(20, 20, 25, 0.4); border: 1px solid var(--border-color); border-radius: 24px; padding: 30px 20px; }
+        .profile-avatar { width: 85px; height: 85px; border-radius: 50%; background: var(--text-gradient); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 900; color: var(--btn-text-color); margin: 0 auto 12px; border: 2px solid var(--border-color); box-shadow: 0 0 25px var(--shadow-color); text-transform: uppercase; cursor: pointer; overflow: hidden; position: relative; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; display: none; border-radius: 50%; }
+        .profile-name { font-size: 22px; font-weight: bold; margin: 0 0 12px 0; color: #fff; }
+        .role-badge { display: inline-block; padding: 5px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: var(--role-color); border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); }
+        .role-owner { background: linear-gradient(270deg, #b172ff, #440099, #b172ff); background-size: 400% 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: textFlow 6s ease infinite; border: 1px solid #b172ff; text-shadow: 0 0 8px rgba(177,114,255,0.3); }
+        
+        .profile-input-row { display: flex; gap: 10px; margin-bottom: 5px; }
+        .profile-input-field { flex: 1; background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; color: #fff; font-size: 14px; outline: none; text-align: center; font-weight: bold; }
+        .profile-save-btn { background: #fff; color: #000; font-weight: bold; border: none; padding: 0 22px; border-radius: 12px; cursor: pointer; font-size: 14px; text-transform: uppercase; }
+        .stats-list-vertical { display: flex; flex-direction: column; gap: 12px; margin-top: 25px; text-align: left; }
+        .stat-line-item { background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .stat-line-lbl { font-size: 13px; color: #666; font-weight: bold; letter-spacing: 0.5px; }
+        .stat-line-val { font-size: 16px; font-weight: bold; color: #fff; }
+              .category-overlay-window { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #07070b; z-index: 15000; overflow-y: auto; padding: 20px 15px 120px; box-sizing: border-box; }
+        .overlay-close-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px; }
+        .overlay-title { font-size: 20px; font-weight: 900; text-transform: uppercase; }
+        .overlay-close-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: #fff; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 65px; background: rgba(15, 15, 20, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 20px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 10px 30px var(--shadow-color); }
+        .nav-item { color: #555; background: none; border: none; flex: 1; height: 100%; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+        .nav-item.active { color: #ffffff !important; background: rgba(255,255,255,0.03); border-radius: 18px; height: 85%; margin: 0 4px; border: 1px solid var(--border-color); }
+        .admin-card { background: rgba(20, 20, 25, 0.5); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 32px var(--shadow-color); text-align: left; }
+        .user-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 14px; margin-bottom: 10px; text-align: left; }
+        .admin-only { display: none; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .adm-btn-group { display: flex; gap: 8px; margin-top: 8px; }
+        .adm-mini-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 20000; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: #0d0e12; border: 1px solid #333; border-radius: 24px; padding: 25px; width: 100%; max-width: 360px; text-align: left; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .modal-close { position: absolute; top: 18px; right: 18px; background: none; border: none; color: #666; font-size: 22px; cursor: pointer; font-weight: bold; }
+        
+        .update-trigger-fixed-btn { position: fixed; bottom: 95px; left: 50%; transform: translateX(-50%); background: rgba(20,20,25,0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid var(--border-color); color: #fff; width: 42px; height: 42px; border-radius: 50%; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 9998; box-shadow: 0 4px 15px var(--shadow-color); }
+    </style>
+</head>
+<body>
+    <div class="stars-container" id="stars-box"></div>
+    <input type="file" id="hidden-avatar-input" style="display:none;" accept="image/*" onchange="loadAvatarFromGallery(this)">
+        <div id="update-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="document.getElementById('update-modal').style.display='none'">×</button>
+            <h3 style="margin-top:0;" class="flow-text">ОБНОВЛЕНИЕ V1.1460</h3>
+            <div style="font-size:13px; color:#aaa; line-height:1.6;">
+                • Полный фикс черного экрана — формулы цвета работают стабильно!<br>
+                • Скрытая админка теперь активируется по секретному никнейму acma<br>
+                • Полный фикс наложения вкладок — админка открывается отдельно<br>
+                • Аватарка из галереи встает на весь круг и не перекрывается буквами<br>
+                • В админку добавлены HUD окна статистики и кнопка Разжаловать ролей<br>
+                • Кнопка инфо обновлений закреплена снизу по центру над меню!
+            </div>
+        </div>
+    </div>
+
+    <div class="header-row"><h1 class="logo-title flow-text">Hinata Sborks</h1></div>
+    <div class="version-text">ВЕРСИЯ САЙТА 1.1460</div>
+    
+    <div id="tab-catalog" class="tab-content active">
+        <div class="search-container"><input type="text" class="search-input" id="search-box" placeholder="Поиск сборок..." oninput="filterSearch()"></div>
+        <div class="categories-row">
+            <button class="cat-box-btn" onclick="openOverlay('half')" ontouchstart="openOverlay('half')">ПолуСборки ➔</button>
+            <button class="cat-box-btn" onclick="openOverlay('full')" ontouchstart="openOverlay('full')">ФуллСборки ➔</button>
+        </div>
+        
+        <div id="all-cards-container">
+            <div class="card mod-card" data-name="orange fanta assembly">
+                <div class="img-wrapper"><img src="https://placeholder.com" alt="Превью"></div>
+                <div class="tags-row"><span class="tag tag-new">NEW</span><span class="tag">Полу сборка</span></div>
+                <div class="author-row"><div class="author-info"><div class="author-avatar">👑</div><div class="author-name">HINATA MAKER</div></div><div class="prefix-tag">ВЛАДЕЛЕЦ</div></div>
+                <h3>ORANGE FANTA ASSEMBLY</h3><p>Небо, прозрачные капты, лого, бомжиха(setskin-135)-кастом NIKE, шрифт, кровь, кастом дигл, звуки выстрела, звуки попадания.</p>
+                <div class="stats-row"><div class="stat-item" onclick="toggleLike(this, 'p-likes-1')" ontouchstart="toggleLike(this, 'p-likes-1')">❤️ <span id="p-likes-1">0</span></div><div class="stat-item">📥 <span class="download-counter-fanta">0</span></div></div>
+                <button class="btn" onclick="downloadMod('orange_fanta')" ontouchstart="downloadMod('orange_fanta')">Скачать</button>
+            </div>
+                       <div class="card mod-card" data-name="kevin purple assembly">
+                <div class="img-wrapper"><img src="https://placeholder.com" alt="Превью"></div>
+                <div class="tags-row"><span class="tag tag-new">NEW</span><span class="tag">Фулл сборка</span></div>
+                <div class="author-row"><div class="author-info"><div class="author-avatar">👤</div><div class="author-name">PHOENIX MODS</div></div><div class="prefix-tag">ИГРОК</div></div>
+                <h3>KEVIN PURPLE ASSEMBLY</h3><p>Эксклюзивное тёмное небо, кастомный фиолетовый интерфейс, замена всех скинов банд, новые звуки оружия и максимальный FPS UP.</p>
+                <div class="stats-row"><div class="stat-item" onclick="toggleLike(this, 'p-likes-2')" ontouchstart="toggleLike(this, 'p-likes-2')">❤️ <span id="p-likes-2">0</span></div><div class="stat-item">📥 <span class="download-counter-kevin">0</span></div></div>
+                <button class="btn" onclick="downloadMod('kevin_purple')" ontouchstart="downloadMod('kevin_purple')">Скачать</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlay-half" class="category-overlay-window">
+        <div class="overlay-close-header">
+            <span class="overlay-title flow-text">ПолуСборки</span>
+            <button class="overlay-close-btn" onclick="closeOverlay('half')" ontouchstart="closeOverlay('half')">×</button>
+        </div>
+        <div id="half-overlay-content"></div>
+    </div>
+
+    <div id="overlay-full" class="category-overlay-window">
+        <div class="overlay-close-header">
+            <span class="overlay-title flow-text">ФуллСборки</span>
+            <button class="overlay-close-btn" onclick="closeOverlay('full')" ontouchstart="closeOverlay('full')">×</button>
+        </div>
+        <div id="full-overlay-content"></div>
+    </div>
+      <div id="tab-profile" class="tab-content">
+        <div class="profile-card">
+            <div class="profile-avatar" onclick="document.getElementById('hidden-avatar-input').click()" id="user-avatar"><img src="" id="user-avatar-img"><span id="user-avatar-letter-span">👤</span></div>
+            <div class="profile-name" id="user-name">Игрок</div>
+            <div><span class="role-badge" id="role-text">Игрок</span></div>
+            
+            <div class="custom-design-box" id="nick-setup-container">
+                <span class="design-title">⚙️ Настройка Профиля</span>
+                <div class="profile-input-row">
+                    <input type="text" id="profile-nick-input" class="profile-input-field" placeholder="Введите ваш Ник">
+                    <button class="profile-save-btn" onclick="saveCustomNick()" ontouchstart="saveCustomNick()">ОК</button>
+                </div>
+            </div>
+            
+            <div class="custom-design-box">
+                <span class="design-title">🎨 Кастом дизайн сайта</span>
+                <div class="theme-circle-grid">
+                    <button class="circle-t-btn c-btn-mono" onclick="changeTheme('mono')"></button>
+                    <button class="circle-t-btn c-btn-purple" onclick="changeTheme('purple')"></button>
+                    <button class="circle-t-btn c-btn-emerald" onclick="changeTheme('emerald')"></button>
+                    <button class="circle-t-btn c-btn-fire" onclick="changeTheme('fire')"></button>
+                </div>
+                <div class="brightness-slider-row" style="margin-top:10px; padding: 0 4px;">
+                    <span class="brightness-slider-lbl">Яркость интерфейса</span>
+                    <input type="range" id="brightness-slider-element" class="brightness-slider" min="15" max="100" value="100" oninput="applyBrightness(this.value)">
+                </div>
+            </div>
+            <div class="stats-list-vertical">
+                <div class="stat-line-item"><span class="stat-line-lbl">❤️ Поставлено лайков</span><span class="stat-line-val" id="profile-likes-total">0</span></div>
+                <div class="stat-line-item"><span class="stat-line-lbl">📥 Успешных загрузок</span><span class="stat-line-val" id="profile-downloads-total">0</span></div>
+                <div class="stat-line-item"><span class="stat-line-lbl">📁 Доступно сборок</span><span class="stat-line-val">2</span></div>
+            </div>
+        </div>
+      </div>
+         <div id="tab-admin" class="tab-content">
+        <div class="admin-card">
+            <h3 class="flow-text" style="margin-top:0;">Статистика Hinata Sborks</h3>
+            <p style="color:#fff; margin-bottom:5px;">Онлайн сайта: <span style="color:#00ff66; font-weight:bold;">1</span></p>
+            <p style="color:#fff; margin-bottom:5px;">Всего скачиваний: <span style="font-weight:bold; color:#fff;" id="admin-total-downloads-hud">0</span></p>
+            <p style="color:#fff;">Популярная сборка: <span style="color:#b172ff; font-weight:bold;">Orange Fanta</span></p>
+        </div>
+        <button class="btn" onclick="openPlayersOverlay()" style="padding:12px; font-size:13px; text-transform:uppercase;">⚙️ Управление игроками</button>
+    </div>
+
+    <div id="overlay-players-admin" class="category-overlay-window">
+        <div class="overlay-close-header">
+            <span class="overlay-title flow-text">Управление игроками</span>
+            <button class="overlay-close-btn" onclick="closePlayersOverlay()">×</button>
+        </div>
+        <div id="adm-players-list-box">
+            <div class="user-item">
+                <div>
+                    <div class="user-item-info" id="p-list-n-1">cremles</div>
+                    <div class="user-item-stats">Роль: <span style="color:#b172ff; font-weight:bold;" id="p-list-r-1">Игрок</span></div>
+                    <div class="adm-btn-group">
+                        <button class="adm-mini-btn" onclick="viewPlayerStats('cremles', 6, 0)">Статистика</button>
+                        <button class="adm-mini-btn owner-only-action" onclick="openRolePanel('cremles', 'p-list-r-1')">Роль</button>
+                    </div>
+                </div>
+            </div>
+            <div class="user-item">
+                <div>
+                    <div class="user-item-info" id="p-list-n-2">phoenix_mod</div>
+                    <div class="user-item-stats">Роль: <span style="color:#aaa;" id="p-list-r-2">Игрок</span></div>
+                    <div class="adm-btn-group">
+                        <button class="adm-mini-btn" onclick="viewPlayerStats('phoenix_mod', 12, 4)">Статистика</button>
+                        <button class="adm-mini-btn owner-only-action" onclick="openRolePanel('phoenix_mod', 'p-list-r-2')">Роль</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="update-trigger-fixed-btn" onclick="document.getElementById('update-modal').style.display='flex'">❓</button>
+
+    <div class="nav-bar">
+        <button class="nav-item active" id="nav-catalog" onclick="switchTab('catalog')">📁<span>Каталог</span></button>
+        <button class="nav-item" id="nav-profile" onclick="switchTab('profile')">👤<span>Профиль</span></button>
+        <button class="nav-item admin-only" id="nav-admin" onclick="switchTab('admin')">⚙️<span>Админ</span></button>
+    </div>
+      <script>
+        let globalDownloads = parseInt(localStorage.getItem('h_global_dl')) || 0;
+        let userDownloads = parseInt(localStorage.getItem('h_user_dl')) || 0;
+        let isOwnerSession = false; let currentEditingRoleTargetId = null;
+        let activeThemeColor = "hsla(260, 100%, 15%, 0.4)";
+
+        function createStars() {
+            const box = document.getElementById('stars-box');
+            for(let i=0; i<45; i++) {
+                let star = document.createElement('div'); star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px'; star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%'; star.style.top = Math.random() * 100 + '%';
+                star.style.animationDuration = Math.random() * 3 + 2 + 's'; box.appendChild(star);
+            }
+        }
+        createStars();
+
+        function loadSavedSession() {
+            document.getElementById('admin-total-downloads-hud').innerText = globalDownloads;
+            document.getElementById('profile-downloads-total').innerText = userDownloads;
+            const savedNick = localStorage.getItem('h_username');
+            if(savedNick) {
+                document.getElementById('user-name').innerText = savedNick;
+                document.getElementById('user-avatar-letter-span').style.display = 'none';
+                document.getElementById('nick-setup-container').style.display = 'none';
+                checkAdminRights(savedNick);
+            }
+            const savedImg = localStorage.getItem('h_user_avatar');
+            if(savedImg) {
+                const avatarImg = document.getElementById('user-avatar-img');
+                avatarImg.src = savedImg; avatarImg.style.display = 'block';
+                document.getElementById('user-avatar-letter-span').style.display = 'none';
+            }
+        }
+        window.addEventListener('DOMContentLoaded', loadSavedSession);
+
+        function loadAvatarFromGallery(input) {
+            if (input.files && input.files) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgData = e.target.result;
+                    localStorage.setItem('h_user_avatar', imgData);
+                    const avatarImg = document.getElementById('user-avatar-img');
+                    avatarImg.src = imgData; avatarImg.style.display = 'block';
+                    document.getElementById('user-avatar-letter-span').style.display = 'none';
+                    Telegram.WebApp.showAlert('Аватарка успешно обновлена!');
+                }
+                reader.readAsDataURL(input.files);
+            }
+        }
+               function saveCustomNick() {
+            let nick = document.getElementById('profile-nick-input').value.trim();
+            if(nick === '') { Telegram.WebApp.showAlert('Введите ваш Никнейм!'); return; }
+            localStorage.setItem('h_username', nick);
+            document.getElementById('user-name').innerText = nick;
+            document.getElementById('nick-setup-container').style.display = 'none';
+            checkAdminRights(nick);
+        }
+
+        function checkAdminRights(nick) {
+            let lowNick = nick.toLowerCase();
+            if(lowNick === 'acma') {
+                isOwnerSession = true;
+                const rText = document.getElementById('role-text');
+                if(rText) { rText.innerText = 'Владелец'; rText.className = 'role-badge role-owner'; }
+                document.getElementById('nav-admin').style.setProperty('display', 'flex', 'important');
+                document.querySelectorAll('.owner-only-action').forEach(b => b.style.display = 'inline-block');
+            } else if(localStorage.getItem('h_is_admin') === 'true') {
+                isOwnerSession = false;
+                const rText = document.getElementById('role-text');
+                if(rText) { rText.innerText = 'Администратор'; rText.className = 'role-badge'; rText.style.borderColor = '#00ff66'; rText.style.color = '#00ff66'; }
+                document.getElementById('nav-admin').style.setProperty('display', 'flex', 'important');
+                document.querySelectorAll('.owner-only-action').forEach(b => b.style.display = 'none');
+            }
+        }
+
+        function downloadMod(modId) {
+            globalDownloads += 1; userDownloads += 1;
+            localStorage.setItem('h_global_dl', globalDownloads);
+            localStorage.setItem('h_user_dl', userDownloads);
+            document.getElementById('admin-total-downloads-hud').innerText = globalDownloads;
+            document.getElementById('profile-downloads-total').innerText = userDownloads;
+            if(modId === 'orange_fanta') {
+                document.querySelectorAll('.download-counter-fanta').forEach(s => s.innerText = parseInt(s.innerText) + 1);
+            } else {
+                document.querySelectorAll('.download-counter-kevin').forEach(s => s.innerText = parseInt(s.innerText) + 1);
+            }
+            window.location.href = "https://t.me" + modId;
+        }
+
+        function openOverlay(type) {
+            const overlay = document.getElementById('overlay-' + type);
+            const contentBox = document.getElementById(type + '-overlay-content');
+            contentBox.innerHTML = '';
+            document.querySelectorAll('#all-cards-container .mod-card').forEach(card => {
+                const tagText = card.querySelector('.tag:not(.tag-new)').innerText.toLowerCase();
+                if((type === 'half' && tagText.includes('полу')) || (type === 'full' && tagText.includes('фулл'))) {
+                    contentBox.innerHTML += card.outerHTML;
+                }
+            });
+            if(overlay) overlay.style.display = 'block';
+        }
+        function closeOverlay(type) { const overlay = document.getElementById('overlay-' + type); if(overlay) overlay.style.display = 'none'; }
+        function openPlayersOverlay() { document.getElementById('overlay-players-admin').style.display = 'block'; }
+        function closePlayersOverlay() { document.getElementById('overlay-players-admin').style.display = 'none'; }
+
+        function viewPlayerStats(pName, dlCount, lCount) {
+            Telegram.WebApp.showPopup({ title: `HUD инфо: ${pName}`, message: `Поставил лайков на сборки: ${lCount}\nУспешных загрузок архивов: ${dlCount}`, buttons: [{type: 'cancel', text: 'Закрыть'}] });
+        }
+
+        function openRolePanel(pName, elementId) {
+            if(!isOwnerSession) return;
+            currentEditingRoleTargetId = elementId;
+            Telegram.WebApp.showPopup({
+                title: 'Префиксы и Права',
+                message: `Выберите новую роль для игрока ${pName}:`,
+                buttons: [
+                    {id: 'adm', type: 'default', text: 'Администратор'},
+                    {id: 'mod', type: 'default', text: 'Модератор'},
+                    {id: 'usr', type: 'destructive', text: 'Разжаловать в Игрок'}
+                ]
+            }, (btnId) => {
+                const targetSpan = document.getElementById(currentEditingRoleTargetId);
+                if(!targetSpan) return;
+                if(btnId === 'adm') { targetSpan.innerText = 'Администратор'; targetSpan.style.color = '#00ff66'; if(pName==='cremles') localStorage.setItem('h_is_admin', 'true'); }
+                else if(btnId === 'mod') { targetSpan.innerText = 'Модератор'; targetSpan.style.color = '#ffaa00'; }
+                else if(btnId === 'usr') { targetSpan.innerText = 'Игрок'; targetSpan.style.color = '#aaa'; if(pName==='cremles') localStorage.removeItem('h_is_admin'); }
+            });
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            const targetTab = document.getElementById('tab-' + tabId); if(targetTab) targetTab.classList.add('active');
+            const targetNav = document.getElementById('nav-' + tabId); if(targetNav) targetNav.classList.add('active');
+        }
+
+        function filterSearch() {
+            const query = document.getElementById('search-box').value.toLowerCase();
+            document.querySelectorAll('#all-cards-container .mod-card').forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                card.style.display = name.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        function toggleLike(btn, id) {
+            let span = document.getElementById(id); let count = parseInt(span.innerText); let total = document.getElementById('profile-likes-total');
+            if(!btn.classList.contains('liked')) {
+                btn.classList.add('liked'); btn.style.color = '#00ff66'; span.innerText = count + 1; if(total) total.innerText = parseInt(total.innerText) + 1;
+            } else {
+                btn.classList.remove('liked'); btn.style.color = '#fff'; span.innerText = count - 1; if(total) total.innerText = parseInt(total.innerText) - 1;
+            }
+        }
+
+        // БРОНЕБОЙНЫЙ ОПТИМИЗИРОВАННЫЙ ПОЛЗУНОК ЯРКОСТИ БЕЗ БАГОВ
+        function applyBrightness(val) {
+            const root = document.documentElement;
+            const factor = val / 100;
+            root.style.setProperty('--bg-gradient', `linear-gradient(135deg, rgb(${Math.round(5 * factor)}, 0, ${Math.round(15 * factor)}), ${activeThemeColor}, rgb(${Math.round(5 * factor)}, 0, ${Math.round(15 * factor)}))`);
+            document.body.style.opacity = Math.max(0.4, factor);
+        }
+
+        function changeTheme(theme) {
+            const root = document.documentElement; document.body.classList.remove('purple-active');
+            if(theme === 'purple') {
+                activeThemeColor = "rgba(28, 0, 53, 0.5)"; document.body.classList.add('purple-active');
+                root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #b172ff, #440099, #b172ff)');
+                root.style.setProperty('--border-color', 'rgba(177, 114, 255, 0.25)');
+                root.style.setProperty('--tag-color', '#b172ff'); root.style.setProperty('--role-color', '#b172ff');
+                root.style.setProperty('--btn-text-color', '#ffffff');
+            } else if(theme === 'emerald') {
+                activeThemeColor = "rgba(0, 36, 9, 0.5)";
+                root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #00ff66, #006622, #00ff66)');
+                root.style.setProperty('--border-color', 'rgba(0, 255, 102, 0.25)');
+                root.style.setProperty('--tag-color', '#00ff66'); root.style.setProperty('--role-color', '#00ff66');
+                root.style.setProperty('--btn-text-color', '#000000');
+            } else if(theme === 'fire') {
+                activeThemeColor = "rgba(54, 0, 0, 0.5)";
+                root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ff3737, #800000, #ff3737)');
+                root.style.setProperty('--border-color', 'rgba(255, 55, 55, 0.25)');
+                root.style.setProperty('--tag-color', '#ff3737'); root.style.setProperty('--role-color', '#ff3737');
+                root.style.setProperty('--btn-text-color', '#ffffff');
+            } else {
+                activeThemeColor = "rgba(20, 20, 25, 0.5)";
+                root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffffff, #555555, #ffffff)');
+                root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.08)');
+                root.style.setProperty('--tag-color', '#aaa'); root.style.setProperty('--role-color', '#00ff66');
+                root.style.setProperty('--btn-text-color', '#000000');
+            }
+            const slider = document.getElementById('brightness-slider-element');
+            applyBrightness(slider ? slider.value : 100);
+        }
+    </script>
+</body>
+</html>
