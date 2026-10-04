@@ -117,10 +117,10 @@
             <button class="modal-close" onclick="document.getElementById('update-modal').style.display='none'">×</button>
             <h3 style="margin-top:0;" class="flow-text">ОБНОВЛЕНИЕ 1.1725</h3>
             <div style="font-size:13px; color:#aaa; line-height:1.7; font-weight: bold;">
-                • Оффлайн-защита удалена: жесткая фиксация на сервере!<br>
-                • Авторизация строго по Нику, глобальные лайки и живой онлайн сохранены!<br>
-                • Сборки от автора asma добавлены под статус ВЛАДЕЛЕЦ!<br>
-                • Нарезка на 19 частей стык в стык: 100% фикс кнопки копирования!
+                • добавлены новые сборки<br>
+                • обновление сервера<br>
+                • смена ник нейма<br>
+                • обновление интерфейа
             </div>
         </div>
     </div>
@@ -258,11 +258,19 @@
         }
         function loadSavedSession() {
             createStars(); document.getElementById('p-hud-total-downloads').innerText = globalDownloads; document.getElementById('profile-downloads-total').innerText = userDownloads;
+                function resetMyNickname() { 
+            localStorage.removeItem('h_username'); 
+            localStorage.removeItem('h_user_avatar'); 
+            Telegram.WebApp.showAlert('Ваш ник успешно сброшен! Теперь вы можете ввести новый ник.'); 
+            window.location.reload(); 
+        }
+        function loadSavedSession() {
+            createStars(); document.getElementById('p-hud-total-downloads').innerText = globalDownloads; document.getElementById('profile-downloads-total').innerText = userDownloads;
             if(!localStorage.getItem('h_welcome_seen')) { document.getElementById('welcome-start-modal').style.display = 'flex'; localStorage.setItem('h_welcome_seen', 'true'); }
             const savedNick = localStorage.getItem('h_username');
             if(savedNick) { 
                 document.getElementById('user-name').innerText = savedNick; setTwoLetterAvatar(savedNick); 
-                document.getElementById('nick-setup-container').innerHTML = '<span class="design-title">⚙️ Управление аккаунтом</span><button class="profile-save-btn" style="background:#ff3333; color:#fff;" onclick="resetMyNickname()">Сбросить ник (1 раз)</button>'; 
+                document.getElementById('nick-setup-container').innerHTML = '<span class="design-title">⚙️ Управление аккаунтом</span><button class="profile-save-btn" style="background:#ff3333; color:#fff;" onclick="resetMyNickname()">Сбросить ник</button>'; 
                 checkAdminRights(savedNick); 
             }
             const savedImg = localStorage.getItem('h_user_avatar'); if(savedImg) { const avatarImg = document.getElementById('user-avatar-img'); avatarImg.src = savedImg; avatarImg.style.display = 'block'; document.getElementById('user-avatar-letter-span').style.display = 'none'; }
@@ -271,8 +279,75 @@
         window.addEventListener('DOMContentLoaded', loadSavedSession);
         function setTwoLetterAvatar(nick) { const spanBox = document.getElementById('user-avatar-letter-span'); if(nick.length >= 2) { spanBox.innerText = nick.substring(0, 2).toUpperCase(); } else { spanBox.innerText = nick.charAt(0).toUpperCase(); } }
         async function loadAvatarFromGallery(input) { if (input.files && input.files) { const reader = new FileReader(); reader.onload = async function(e) { const imgData = e.target.result; localStorage.setItem('h_user_avatar', imgData); document.getElementById('user-avatar-img').src = imgData; document.getElementById('user-avatar-img').style.display = 'block'; document.getElementById('user-avatar-letter-span').style.display = 'none'; const cUser = localStorage.getItem('h_username') || "Игрок"; await fetch(`${SUPABASE_URL}/users?username=eq.${cUser}`, { method: "PATCH", headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ avatar_url: imgData }) }); }; reader.readAsDataURL(input.files); } }
-        async function saveCustomNick() { let nick = document.getElementById('profile-nick-input').value.trim(); if(nick === '') { Telegram.WebApp.showAlert('Введите ваш Никнейм!'); return; } let lowNick = nick.toLowerCase(); if(registeredGlobalNicks.includes(lowNick)) { Telegram.WebApp.showAlert('Данный никнейм уже занят на сервере!'); return; } localStorage.setItem('h_username', nick); document.getElementById('user-name').innerText = nick; setTwoLetterAvatar(nick); document.getElementById('nick-setup-container').innerHTML = '<span class="design-title">⚙️ Управление аккаунтом</span><button class="profile-save-btn" style="background:#ff3333; color:#fff;" onclick="resetMyNickname()">Сбросить ник (1 раз)</button>'; await fetch(`${SUPABASE_URL}/users`, { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ username: nick }) }); syncWithServer(); checkAdminRights(nick); }
-        function checkAdminRights(nick) { let lowNick = nick.toLowerCase(); if(lowNick === 'hinata' || lowNick === 'asma') { isOwnerSession = true; const rText = document.getElementById('role-text'); if(rText) { rText.innerText = 'Владелец'; rText.className = 'role-badge role-owner'; } const adminBtn = document.getElementById('nav-admin'); if(adminBtn) { adminBtn.style.setProperty('display', 'flex', 'important'); adminBtn.className = 'nav-item'; } } }
+        async function saveCustomNick() { let nick = document.getElementById('profile-nick-input').value.trim(); if(nick === '') { Telegram.WebApp.showAlert('Введите ваш Никнейм!'); return; } let lowNick = nick.toLowerCase(); if(registeredGlobalNicks.includes(lowNick)) { Telegram.WebApp.showAlert('Данный никнейм уже занят на сервере!'); return; } localStorage.setItem('h_username', nick); document.getElementById('user-name').innerText = nick; setTwoLetterAvatar(nick); document.getElementById('nick-setup-container').innerHTML = '<span class="design-title">⚙️ Управление аккаунтом</span><button class="profile-save-btn" style="background:#ff3333; color:#fff;" onclick="resetMyNickname()">Сбросить ник</button>'; await fetch(`${SUPABASE_URL}/users`, { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ username: nick }) }); checkAdminRights(nick); syncWithServer(); }
+        function checkAdminRights(nick) { 
+            let lowNick = nick.toLowerCase(); 
+            if(lowNick === 'hinata' || lowNick === 'asma') { 
+                isOwnerSession = true; 
+                const rText = document.getElementById('role-text'); 
+                if(rText) { 
+                    if(lowNick === 'asma') {
+                        rText.innerText = 'Владелец'; 
+                        rText.className = 'role-badge role-owner'; 
+                    } else if(lowNick === 'hinata') {
+                        rText.innerText = 'Админ'; 
+                        rText.className = 'role-badge';
+                        rText.style.setProperty('color', '#00f0ff', 'important');
+                        rText.style.setProperty('border-color', '#00f0ff', 'important');
+                    }
+                } 
+                const adminBtn = document.getElementById('nav-admin'); 
+                if(adminBtn) { 
+                    adminBtn.style.setProperty('display', 'flex', 'important'); 
+                    adminBtn.className = 'nav-item'; 
+                } 
+            } 
+        }
+                function resetMyNickname() { 
+            localStorage.removeItem('h_username'); 
+            localStorage.removeItem('h_user_avatar'); 
+            Telegram.WebApp.showAlert('Ваш ник успешно сброшен! Теперь вы можете ввести новый ник.'); 
+            window.location.reload(); 
+        }
+        function loadSavedSession() {
+            createStars(); document.getElementById('p-hud-total-downloads').innerText = globalDownloads; document.getElementById('profile-downloads-total').innerText = userDownloads;
+            if(!localStorage.getItem('h_welcome_seen')) { document.getElementById('welcome-start-modal').style.display = 'flex'; localStorage.setItem('h_welcome_seen', 'true'); }
+            const savedNick = localStorage.getItem('h_username');
+            if(savedNick) { 
+                document.getElementById('user-name').innerText = savedNick; setTwoLetterAvatar(savedNick); 
+                document.getElementById('nick-setup-container').innerHTML = '<span class="design-title">⚙️ Управление аккаунтом</span><button class="profile-save-btn" style="background:#ff3333; color:#fff;" onclick="resetMyNickname()">Сбросить ник</button>'; 
+                checkAdminRights(savedNick); 
+            }
+            const savedImg = localStorage.getItem('h_user_avatar'); if(savedImg) { const avatarImg = document.getElementById('user-avatar-img'); avatarImg.src = savedImg; avatarImg.style.display = 'block'; document.getElementById('user-avatar-letter-span').style.display = 'none'; }
+            const savedTheme = localStorage.getItem('h_launcher_theme') || 'mono'; changeTheme(savedTheme); syncWithServer(); setInterval(syncWithServer, 10000);
+        }
+        window.addEventListener('DOMContentLoaded', loadSavedSession);
+        function setTwoLetterAvatar(nick) { const spanBox = document.getElementById('user-avatar-letter-span'); if(nick.length >= 2) { spanBox.innerText = nick.substring(0, 2).toUpperCase(); } else { spanBox.innerText = nick.charAt(0).toUpperCase(); } }
+        async function loadAvatarFromGallery(input) { if (input.files && input.files) { const reader = new FileReader(); reader.onload = async function(e) { const imgData = e.target.result; localStorage.setItem('h_user_avatar', imgData); document.getElementById('user-avatar-img').src = imgData; document.getElementById('user-avatar-img').style.display = 'block'; document.getElementById('user-avatar-letter-span').style.display = 'none'; const cUser = localStorage.getItem('h_username') || "Игрок"; await fetch(`${SUPABASE_URL}/users?username=eq.${cUser}`, { method: "PATCH", headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ avatar_url: imgData }) }); }; reader.readAsDataURL(input.files); } }
+        async function saveCustomNick() { let nick = document.getElementById('profile-nick-input').value.trim(); if(nick === '') { Telegram.WebApp.showAlert('Введите ваш Никнейм!'); return; } let lowNick = nick.toLowerCase(); if(registeredGlobalNicks.includes(lowNick)) { Telegram.WebApp.showAlert('Данный никнейм уже занят на сервере!'); return; } localStorage.setItem('h_username', nick); document.getElementById('user-name').innerText = nick; setTwoLetterAvatar(nick); document.getElementById('nick-setup-container').innerHTML = '<span class="design-title">⚙️ Управление аккаунтом</span><button class="profile-save-btn" style="background:#ff3333; color:#fff;" onclick="resetMyNickname()">Сбросить ник</button>'; await fetch(`${SUPABASE_URL}/users`, { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ username: nick }) }); checkAdminRights(nick); syncWithServer(); }
+        function checkAdminRights(nick) { 
+            let lowNick = nick.toLowerCase(); 
+            if(lowNick === 'hinata' || lowNick === 'asma') { 
+                isOwnerSession = true; 
+                const rText = document.getElementById('role-text'); 
+                if(rText) { 
+                    if(lowNick === 'asma') {
+                        rText.innerText = 'Владелец'; 
+                        rText.className = 'role-badge role-owner'; 
+                    } else if(lowNick === 'hinata') {
+                        rText.innerText = 'Админ'; 
+                        rText.className = 'role-badge';
+                        rText.style.setProperty('color', '#00f0ff', 'important');
+                        rText.style.setProperty('border-color', '#00f0ff', 'important');
+                    }
+                } 
+                const adminBtn = document.getElementById('nav-admin'); 
+                if(adminBtn) { 
+                    adminBtn.style.setProperty('display', 'flex', 'important'); 
+                    adminBtn.className = 'nav-item'; 
+                } 
+            } 
+        }
         async function downloadMod(modId, mid) { globalDownloads += 1; userDownloads += 1; localStorage.setItem('h_global_dl', globalDownloads); localStorage.setItem('h_user_dl', userDownloads); document.getElementById('profile-downloads-total').innerText = userDownloads; await fetch(`${SUPABASE_URL}/stats`, { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ downloads: globalDownloads }) }); document.getElementById('p-hud-total-downloads').innerText = globalDownloads; window.location.href = "https://t.me" + modId; }
         function openOverlay(type) { const overlay = document.getElementById('overlay-' + type); const contentBox = document.getElementById(type + '-overlay-content'); contentBox.innerHTML = ''; document.querySelectorAll('#all-cards-container .mod-card').forEach(card => { const tagText = card.querySelector('.tag:not(.tag-new)').innerText.toLowerCase(); if((type === 'half' && tagText.includes('полу')) || (type === 'full' && tagText.includes('фулл'))) { contentBox.innerHTML += card.outerHTML; } }); if(overlay) overlay.style.display = 'block'; }
         function closeOverlay(type) { const overlay = document.getElementById('overlay-' + type); if(overlay) overlay.style.display = 'none'; }
@@ -282,6 +357,8 @@
         function applyBrightness(val) { const opacityFactor = (100 - val) / 100; document.documentElement.style.setProperty('--bg-dark-overlay', `rgba(0, 0, 0, ${opacityFactor * 0.85})`); }
         function changeTheme(theme) {
             const root = document.documentElement; localStorage.setItem('h_launcher_theme', theme);
+            
+            
             
             
                      if(theme === 'purple') { activeThemeBg = "linear-gradient(135deg, #05000f, #1b003a, #05000f)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #b172ff, #440099, #b172ff)'); root.style.setProperty('--border-color', 'rgba(177, 114, 255, 0.25)'); root.style.setProperty('--tag-color', '#b172ff'); root.style.setProperty('--role-color', '#b172ff'); root.style.setProperty('--btn-text-color', '#ffffff'); }
