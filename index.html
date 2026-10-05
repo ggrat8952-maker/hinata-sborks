@@ -314,7 +314,7 @@
             } 
         }
         async function downloadMod(modId, mid) { globalDownloads += 1; userDownloads += 1; localStorage.setItem('h_global_dl', globalDownloads); localStorage.setItem('h_user_dl', userDownloads); document.getElementById('profile-downloads-total').innerText = userDownloads; await fetch(`${SUPABASE_URL}/stats`, { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": `Bearer ${SUPABASE_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ downloads: globalDownloads }) }); document.getElementById('p-hud-total-downloads').innerText = globalDownloads; window.location.href = "https://t.me" + modId; }
-                  function openOverlay(type) {
+                   function openOverlay(type) {
             const overlay = document.getElementById('overlay-' + type);
             const contentBox = document.getElementById(type + '-overlay-content');
             contentBox.innerHTML = '';
@@ -354,11 +354,11 @@
                 localStorage.setItem('h_liked_' + mid, 'true');
                 btn.parentElement.classList.add('liked');
                 btn.parentElement.style.color = '#00ff66';
-                await fetch(`${SUPABASE_URL}/likes`, {
+                await fetch(SUPABASE_URL + '/likes', {
                     method: "POST",
                     headers: {
                         "apikey": SUPABASE_KEY,
-                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "Authorization": "Bearer " + SUPABASE_KEY,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({ mod_id: mid, username: user })
@@ -367,11 +367,11 @@
                 localStorage.setItem('h_liked_' + mid, 'false');
                 btn.parentElement.classList.remove('liked');
                 btn.parentElement.style.color = '#fff';
-                await fetch(`${SUPABASE_URL}/likes?mod_id=eq.${mid}&username=eq.${user}`, {
+                await fetch(SUPABASE_URL + '/likes?mod_id=eq.' + mid + '&username=eq.' + user, {
                     method: "DELETE",
                     headers: {
                         "apikey": SUPABASE_KEY,
-                        "Authorization": `Bearer ${SUPABASE_KEY}`
+                        "Authorization": "Bearer " + SUPABASE_KEY
                     }
                 });
             }
@@ -381,7 +381,7 @@
             const opacityFactor = (100 - val) / 100;
             document.documentElement.style.setProperty(
                 '--bg-dark-overlay',
-                `rgba(0, 0, 0, ${opacityFactor * 0.85})`
+                'rgba(0, 0, 0, ' + (opacityFactor * 0.85) + ')'
             );
         }
         function changeTheme(theme) {
@@ -447,5 +447,5 @@
             document.body.style.setProperty('background', activeThemeBg, 'important');
             const slider = document.getElementById('brightness-slider-element');
             applyBrightness(slider ? slider.value : 100);
-          }
-          
+        }
+            
