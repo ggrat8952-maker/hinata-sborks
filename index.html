@@ -316,7 +316,7 @@
         }
         async function downloadMod(modId, mid) { globalDownloads += 1; userDownloads += 1; localStorage.setItem('h_global_dl', globalDownloads); localStorage.setItem('h_user_dl', userDownloads); document.getElementById('profile-downloads-total').innerText = userDownloads; await fetch(SUPABASE_URL + '/stats?id=eq.1', { method: "PATCH", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ downloads: globalDownloads }) }); document.getElementById('p-hud-total-downloads').innerText = globalDownloads; window.location.href = "https://t.me" + modId; }
         function openOverlay(type) { const overlay = document.getElementById('overlay-' + type); const contentBox = document.getElementById(type + '-overlay-content'); contentBox.innerHTML = ''; document.querySelectorAll('#all-cards-container .mod-card').forEach(card => { const tagText = card.querySelector('.tag:not(.tag-new)').innerText.toLowerCase(); if((type === 'half' && tagText.includes('полу')) || (type === 'full' && tagText.includes('фулл'))) { contentBox.innerHTML += card.outerHTML; } }); if(overlay) overlay.style.display = 'block'; }
-                          function closeOverlay(type) {
+                                  function closeOverlay(type) {
             const overlay = document.getElementById('overlay-' + type);
             if(overlay) overlay.style.display = 'none';
         }
@@ -441,5 +441,17 @@
             document.body.style.setProperty('background', activeThemeBg, 'important');
             const slider = document.getElementById('brightness-slider-element');
             applyBrightness(slider ? slider.value : 100);
-                }
+        }
+        function initEventListeners() {
+            const bHalf = document.getElementById('btn-overlay-half'); if(bHalf) bHalf.onclick = function(){ openOverlay('half'); };
+            const bFull = document.getElementById('btn-overlay-full'); if(bFull) bFull.onclick = function(){ openOverlay('full'); };
+            const bSave = document.getElementById('btn-save-custom-nick'); if(bSave) bSave.onclick = saveCustomNick;
+            const tMaint = document.getElementById('server-lock-toggle-btn'); if(tMaint) tMaint.onclick = fireMaintenanceToggle;
+            const avatarDiv = document.getElementById('user-avatar'); if(avatarDiv) avatarDiv.onclick = function(){ document.getElementById('hidden-avatar-input').click(); };
+            const hiddenAv = document.getElementById('hidden-avatar-input'); if(hiddenAv) hiddenAv.onchange = function(){ loadAvatarFromGallery(this); };
+            const bSlider = document.getElementById('brightness-slider-element'); if(bSlider) bSlider.oninput = function(){ applyBrightness(this.value); };
+            document.querySelectorAll('.theme-circle-grid .circle-t-btn').forEach(btn => { btn.onclick = function(){ changeTheme(this.getAttribute('data-theme')); }; });
+            document.querySelectorAll('.btn-like-trigger').forEach(btn => { btn.onclick = function(){ toggleLike(this, this.getAttribute('data-mid')); }; });
+            document.querySelectorAll('.btn-download-trigger').forEach(btn => { btn.onclick = function(){ downloadMod(this.getAttribute('data-modid'), this.getAttribute('data-mid')); }; });
+        }
             
