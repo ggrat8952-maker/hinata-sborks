@@ -488,7 +488,7 @@
                     this.innerText = "⏳ Проверка...";
                     
                     try {
-                        const check = await fetch('https://telegram.org' + uid);
+                        const check = await fetch('https://t.me/hinatamodz' + uid);
                         const res = await check.json();
                         if(res.ok && (res.result.status === 'member' || res.result.status === 'administrator' || res.result.status === 'creator')) {
                             document.getElementById('tg-subscription-gate').style.setProperty('display', 'none', 'important');
