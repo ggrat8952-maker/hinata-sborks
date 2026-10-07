@@ -223,7 +223,7 @@
         function filterSearch() { const query = document.getElementById('search-box').value.toLowerCase(); document.querySelectorAll('#all-cards-container .mod-card').forEach(card => { const name = card.getAttribute('data-name').toLowerCase(); card.style.display = name.includes(query) ? 'block' : 'none'; }); }
         async function toggleLike(btn, mid) { const countSpan = document.getElementById('like-count-' + mid); if(!countSpan) return; const isLiked = localStorage.getItem('h_liked_' + mid) === 'true'; const user = localStorage.getItem('h_username') || "Anon"; if(!isLiked) { localStorage.setItem('h_liked_' + mid, 'true'); btn.parentElement.classList.add('liked'); btn.parentElement.style.color = '#00ff66'; await fetch(SUPABASE_URL + '/likes', { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ mod_id: mid, username: user }) }); } else { localStorage.setItem('h_liked_' + mid, 'false'); btn.parentElement.classList.remove('liked'); btn.parentElement.style.color = '#fff'; await fetch(SUPABASE_URL + '/likes?mod_id=eq.' + mid + '&username=eq.' + user, { method: "DELETE", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY } }); } syncWithServer(); }
         function applyBrightness(val) { const opacityFactor = (100 - val) / 100; document.documentElement.style.setProperty('--bg-dark-overlay', 'rgba(0, 0, 0, ' + (opacityFactor * 0.85) + ')'); }
-                              function changeTheme(theme) {
+                                      function changeTheme(theme) {
             const root = document.documentElement; localStorage.setItem('h_launcher_theme', theme);
             if(theme === 'purple') { activeThemeBg = "linear-gradient(135deg, #05000f, #1b003a, #05000f)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #b172ff, #440099, #b172ff)'); root.style.setProperty('--border-color', 'rgba(177, 114, 255, 0.25)'); root.style.setProperty('--tag-color', '#b172ff'); root.style.setProperty('--role-color', '#b172ff'); root.style.setProperty('--btn-text-color', '#ffffff'); }
             else if(theme === 'emerald') { activeThemeBg = "linear-gradient(135deg, #000a02, #00360c, #000a02)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #00ff66, #006622, #00ff66)'); root.style.setProperty('--border-color', 'rgba(0, 255, 102, 0.25)'); root.style.setProperty('--tag-color', '#00ff66'); root.style.setProperty('--role-color', '#00ff66'); root.style.setProperty('--btn-text-color', '#000000'); }
@@ -236,8 +236,7 @@
             document.body.style.setProperty('background', activeThemeBg, 'important'); const slider = document.getElementById('brightness-slider-element'); applyBrightness(slider ? slider.value : 100);
         }
         function toggleSortModal() { const m = document.getElementById('sort-modal-container'); if(m) m.classList.toggle('active'); }
-        function selectSortOption(row) { document.querySelectorAll('.sort-option-row').forEach(r => r.classList.remove('active')); row.classList.add('active'); const mode = row.getAttribute('data-sort'); toggleSortGlobal(mode); toggleSortModal(); }
-        function toggleSortGlobal(mode) { window.Telegram.WebApp.showAlert("Сортировка изменена: " + mode); }
+        function selectSortOption(row) { document.querySelectorAll('.sort-option-row').forEach(r => r.classList.remove('active')); row.classList.add('active'); const mode = row.getAttribute('data-sort'); toggleSortModal(); window.Telegram.WebApp.showAlert("Сортировка изменена: " + mode); }
         function initEventListeners() {
             const closeMod = document.getElementById('btn-close-update-modal'); if(closeMod) closeMod.addEventListener('click', function(){ document.getElementById('update-modal').style.display='none'; });
             const closeWel = document.getElementById('btn-close-welcome-modal'); if(closeWel) closeWel.addEventListener('click', function(){ document.getElementById('welcome-start-modal').style.display='none'; });
@@ -255,7 +254,7 @@
             document.querySelectorAll('.btn-like-trigger').forEach(btn => { btn.addEventListener('click', function(){ toggleLike(this, this.getAttribute('data-mid')); }); });
             document.querySelectorAll('.btn-download-trigger').forEach(btn => { btn.addEventListener('click', function(){ downloadMod(this.getAttribute('data-modid'), this.getAttribute('data-mid')); }); });
             document.querySelectorAll('.sort-option-row').forEach(row => { row.addEventListener('click', function(){ selectSortOption(this); }); });
-            document.querySelectorAll('.categories-row .cat-box-btn').forEach(btn => { btn.addEventListener('click', function(){ document.querySelectorAll('.categories-row .cat-box-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); openOverlay(this.getAttribute('data-cat')); }); });
+            document.querySelectorAll('.categories-row .cat-box-btn').forEach(btn => { btn.addEventListener('click', function(){ document.querySelectorAll('.categories-row .cat-box-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); applySortCategory(this.getAttribute('data-cat')); }); });
         }
     </script>
 </body>
