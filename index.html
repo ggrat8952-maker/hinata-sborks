@@ -235,6 +235,35 @@
             else { activeThemeBg = "linear-gradient(135deg, #02000a, #0d0d11, #02000a)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffffff, #555555, #ffffff)'); border-color: rgba(255, 255, 255, 0.08); root.style.setProperty('--tag-color', '#aaa'); root.style.setProperty('--role-color', '#00ff66'); root.style.setProperty('--btn-text-color', '#000000'); }
             document.body.style.setProperty('background', activeThemeBg, 'important'); const slider = document.getElementById('brightness-slider-element'); applyBrightness(slider ? slider.value : 100);
         }
+        
+                                function applySortCategory(cat) { 
+            document.querySelectorAll('#all-cards-container .mod-card').forEach(card => { 
+                const tagText = card.querySelector('.tag:not(.tag-new)').innerText.toLowerCase(); 
+                if (cat === 'all') { 
+                    card.style.display = 'block'; 
+                } else if (cat === 'half' && tagText.includes('полу')) { 
+                    card.style.display = 'block'; 
+                } else if (cat === 'full' && tagText.includes('фулл')) { 
+                    card.style.display = 'block'; 
+                } else { 
+                    card.style.display = 'none'; 
+                } 
+            }); 
+        }
+        async function toggleLike(btn, mid) { const countSpan = document.getElementById('like-count-' + mid); if(!countSpan) return; const isLiked = localStorage.getItem('h_liked_' + mid) === 'true'; const user = localStorage.getItem('h_username') || "Anon"; if(!isLiked) { localStorage.setItem('h_liked_' + mid, 'true'); btn.parentElement.classList.add('liked'); btn.parentElement.style.color = '#00ff66'; await fetch(SUPABASE_URL + '/likes', { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ mod_id: mid, username: user }) }); } else { localStorage.setItem('h_liked_' + mid, 'false'); btn.parentElement.classList.remove('liked'); btn.parentElement.style.color = '#fff'; await fetch(SUPABASE_URL + '/likes?mod_id=eq.' + mid + '&username=eq.' + user, { method: "DELETE", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY } }); } syncWithServer(); }
+        function applyBrightness(val) { const opacityFactor = (100 - val) / 100; document.documentElement.style.setProperty('--bg-dark-overlay', 'rgba(0, 0, 0, ' + (opacityFactor * 0.85) + ')'); }
+        function changeTheme(theme) {
+            const root = document.documentElement; localStorage.setItem('h_launcher_theme', theme);
+            if(theme === 'purple') { activeThemeBg = "linear-gradient(135deg, #05000f, #1b003a, #05000f)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #b172ff, #440099, #b172ff)'); root.style.setProperty('--border-color', 'rgba(177, 114, 255, 0.25)'); root.style.setProperty('--tag-color', '#b172ff'); root.style.setProperty('--role-color', '#b172ff'); root.style.setProperty('--btn-text-color', '#ffffff'); }
+            else if(theme === 'emerald') { activeThemeBg = "linear-gradient(135deg, #000a02, #00360c, #000a02)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #00ff66, #006622, #00ff66)'); root.style.setProperty('--border-color', 'rgba(0, 255, 102, 0.25)'); root.style.setProperty('--tag-color', '#00ff66'); root.style.setProperty('--role-color', '#00ff66'); root.style.setProperty('--btn-text-color', '#000000'); }
+            else if(theme === 'fire') { activeThemeBg = "linear-gradient(135deg, #0f0000, #440000, #0f0000)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ff3737, #800000, #ff3737)'); root.style.setProperty('--border-color', 'rgba(255, 55, 55, 0.25)'); root.style.setProperty('--tag-color', '#ff3737'); root.style.setProperty('--role-color', '#ff3737'); root.style.setProperty('--btn-text-color', '#ffffff'); }
+            else if(theme === 'aqua') { activeThemeBg = "linear-gradient(135deg, #000c12, #003e4d, #000c12)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #00f0ff, #004e66, #00f0ff)'); root.style.setProperty('--border-color', 'rgba(255, 0, 240, 0.25)'); root.style.setProperty('--tag-color', '#00f0ff'); root.style.setProperty('--role-color', '#00f0ff'); root.style.setProperty('--btn-text-color', '#000000'); }
+            else if(theme === 'gold') { activeThemeBg = "linear-gradient(135deg, #0f0b00, #423000, #0f0b00)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffcc00, #664c00, #ffcc00)'); root.style.setProperty('--border-color', 'rgba(255, 204, 0, 0.25)'); root.style.setProperty('--tag-color', '#ffcc00'); root.style.setProperty('--role-color', '#ffcc00'); root.style.setProperty('--btn-text-color', '#000000'); }
+            else if(theme === 'cyber') { activeThemeBg = "linear-gradient(135deg, #0d001a, #2b0040, #000833)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ff00ff, #001fff, #ff00ff)'); root.style.setProperty('--border-color', 'rgba(255, 0, 255, 0.25)'); root.style.setProperty('--tag-color', '#ff00ff'); root.style.setProperty('--role-color', '#ff00ff'); root.style.setProperty('--btn-text-color', '#ffffff'); }
+            else if(theme === 'ruby') { activeThemeBg = "linear-gradient(135deg, #100003, #3a000a, #1a0005)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ff3333, #330000, #ff3333)'); root.style.setProperty('--border-color', 'rgba(168, 0, 0, 0.25)'); root.style.setProperty('--tag-color', '#ff3333'); root.style.setProperty('--role-color', '#ff3333'); root.style.setProperty('--btn-text-color', '#ffffff'); }
+            else { activeThemeBg = "linear-gradient(135deg, #02000a, #0d0d11, #02000a)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffffff, #555555, #ffffff)'); border-color: rgba(255, 255, 255, 0.08); root.style.setProperty('--tag-color', '#aaa'); root.style.setProperty('--role-color', '#00ff66'); root.style.setProperty('--btn-text-color', '#000000'); }
+            document.body.style.setProperty('background', activeThemeBg, 'important'); const slider = document.getElementById('brightness-slider-element'); applyBrightness(slider ? slider.value : 100);
+        }
         function toggleSortModal() { const m = document.getElementById('sort-modal-container'); if(m) m.classList.toggle('active'); }
         function selectSortOption(row) { document.querySelectorAll('.sort-option-row').forEach(r => r.classList.remove('active')); row.classList.add('active'); const mode = row.getAttribute('data-sort'); toggleSortModal(); window.Telegram.WebApp.showAlert("Сортировка изменена: " + mode); }
         function initEventListeners() {
@@ -255,7 +284,5 @@
             document.querySelectorAll('.btn-download-trigger').forEach(btn => { btn.addEventListener('click', function(){ downloadMod(this.getAttribute('data-modid'), this.getAttribute('data-mid')); }); });
             document.querySelectorAll('.sort-option-row').forEach(row => { row.addEventListener('click', function(){ selectSortOption(this); }); });
             document.querySelectorAll('.categories-row .cat-box-btn').forEach(btn => { btn.addEventListener('click', function(){ document.querySelectorAll('.categories-row .cat-box-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); applySortCategory(this.getAttribute('data-cat')); }); });
-        }
-    </script>
-</body>
-</html>
+                }
+                        
