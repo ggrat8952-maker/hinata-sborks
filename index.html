@@ -465,7 +465,7 @@
             } else { 
                 activeThemeBg = "linear-gradient(135deg, #02000a, #0d0d11, #02000a)"; 
                 root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffffff, #555555, #ffffff)'); 
-                          function initEventListeners() {
+                            function initEventListeners() {
             const closeMod = document.getElementById('btn-close-update-modal'); if(closeMod) closeMod.addEventListener('click', function(){ document.getElementById('update-modal').style.display='none'; });
             const closeWel = document.getElementById('btn-close-welcome-modal'); if(closeWel) closeWel.addEventListener('click', function(){ document.getElementById('welcome-start-modal').style.display='none'; });
             const bHalf = document.getElementById('btn-overlay-half'); if(bHalf) bHalf.addEventListener('click', function(){ openOverlay('half'); });
@@ -482,28 +482,16 @@
             
             const btnVerify = document.getElementById('btn-tg-verify');
             if(btnVerify) {
-                btnVerify.addEventListener('click', async function() {
-                    const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
-                    const uid = tgUser ? tgUser.id : "123456";
+                btnVerify.addEventListener('click', function() {
                     this.innerText = "⏳ Проверка...";
-                    
-                    try {
-                        const check = await fetch('https://t.me/hinatamodz' + uid);
-                        const res = await check.json();
-                        if(res.ok && (res.result.status === 'member' || res.result.status === 'administrator' || res.result.status === 'creator')) {
-                            document.getElementById('tg-subscription-gate').style.setProperty('display', 'none', 'important');
-                            window.Telegram.WebApp.showAlert("✅ Подписка успешно подтверждена! Добро пожаловать.");
-                            loadSavedSession();
-                        } else {
-                            this.innerText = "✅ Проверить";
-                            document.getElementById('tg-subscription-gate').style.setProperty('display', 'none', 'important');
-                            loadSavedSession();
+                    setTimeout(() => {
+                        const gate = document.getElementById('tg-subscription-gate');
+                        if(gate) {
+                            gate.style.setProperty('display', 'none', 'important');
                         }
-                    } catch(e) {
-                        this.innerText = "✅ Проверить";
-                        document.getElementById('tg-subscription-gate').style.setProperty('display', 'none', 'important');
+                        localStorage.setItem('h_tg_subscribed', 'true');
                         loadSavedSession();
-                    }
+                    }, 800);
                 });
             }
 
