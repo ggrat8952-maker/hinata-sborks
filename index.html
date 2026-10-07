@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hinata Sborks</title>
+    <script src="https://telegram.org"></script>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #02000a, #0d0d11, #02000a);
+            --text-gradient: linear-gradient(270deg, #ffffff, #8544ff, #ffffff);
+            --border-color: rgba(133, 68, 255, 0.15);
+                      --tag-color: #b172ff;
+            --role-color: #00ff66;
+            --shadow-color: rgba(0, 0, 0, 0.6);
+            --btn-text-color: #ffffff;
+            --bg-dark-overlay: rgba(0, 0, 0, 0);
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0; padding: 15px; padding-bottom: 120px;
+                      text-align: center; color: #ffffff; overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            background: var(--bg-gradient); background-size: 400% 400% !important;
+            background-attachment: fixed !important;
+            animation: bgFlow 8s ease infinite; position: relative;
+        }
+              body::after { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark-overlay); pointer-events: none; z-index: 14000; transition: background 0.1s; }
+        @keyframes bgFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
+              .star { position: absolute; background: #ffffff; border-radius: 50%; animation: blink linear infinite; box-shadow: 0 0 4px #ffffff; }
+        @keyframes blink { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+        .flow-text { background: var(--text-gradient); background-size: 400% 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: textFlow 6s ease infinite; display: inline-block; }
+              @keyframes textFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .header-row { display: flex; justify-content: center; align-items: center; padding: 10px 5px; margin-bottom: 5px; }
+        .logo-title { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
+              .version-text { font-size: 11px; color: rgba(177,114,255,0.3); font-weight: bold; text-align: right; padding-right: 8px; margin-bottom: 15px; display: block; }
+        .search-container { display: flex; gap: 10px; margin-bottom: 12px; padding: 0 5px; position: relative; }
+        .search-input { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px 45px 14px 15px; color: #fff; font-size: 14px; outline: none; }
+              .search-sort-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #b172ff; font-size: 16px; cursor: pointer; padding: 5px; }
+        .categories-row { display: flex; gap: 8px; margin-bottom: 15px; padding: 0 5px; overflow-x: auto; scrollbar-width: none; }
+        .categories-row::-webkit-scrollbar { display: none; }
+              .cat-box-btn { background: rgba(133,68,255,0.05); border: 1px solid var(--border-color); padding: 10px 18px; border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; color: #a3a7b5; white-space: nowrap; transition: all 0.2s; }
+        .cat-box-btn.active { background: #8544ff; color: #fff; border-color: #8544ff; box-shadow: 0 0 12px rgba(133,68,255,0.4); }
+        .theme-circle-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 10px; margin-bottom: 15px; }
+              .circle-t-btn { width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); cursor: pointer; transition: transform 0.2s; }
+        .circle-t-btn:active { transform: scale(0.85); }
+        .c-btn-mono { background: #ffffff; }
+        .c-btn-purple { background: linear-gradient(135deg, #b172ff, #440099); border-color: #b172ff; }
+              .c-btn-emerald { background: linear-gradient(135deg, #00ff66, #006622); border-color: #00ff66; }
+        .c-btn-fire { background: linear-gradient(135deg, #ff3737, #800000); border-color: #ff3737; }
+        .c-btn-aqua { background: linear-gradient(135deg, #00f0ff, #004e66); border-color: #00f0ff; }
+        .c-btn-gold { background: linear-gradient(135deg, #ffcc00, #664c00); border-color: #ffcc00; }
+              .c-btn-cyber { background: linear-gradient(135deg, #ff00ff, #001fff); border-color: #ff00ff; }
+        .c-btn-ruby { background: linear-gradient(135deg, #a80000, #220000); border-color: #a80000; }
+        .custom-design-box { margin-top: 15px; background: rgba(10,10,15,0.6); border: 1px solid var(--border-color); padding: 15px; border-radius: 20px; text-align: left; }
+              .design-title { font-size: 11px; font-weight: bold; color: rgba(255,255,255,0.3); text-transform: uppercase; display: block; margin-bottom: 12px; letter-spacing: 0.5px; }
+        .brightness-slider-row { width: 100%; text-align: left; margin-top: 5px; }
+        .brightness-slider-lbl { font-size: 11px; color: rgba(255,255,255,0.4); font-weight: bold; margin-bottom: 6px; display: block; text-transform: uppercase; }
+              .brightness-slider { width: 100%; -webkit-appearance: none; background: #151224; height: 6px; border-radius: 5px; outline: none; border: 1px solid var(--border-color); }
+        .brightness-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 16px; border-radius: 4px; background: #b172ff; cursor: pointer; box-shadow: 0 0 8px #b172ff; }
+              .card { background: rgba(15, 13, 26, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 24px; padding: 16px; margin-bottom: 20px; box-shadow: 0 12px 32px var(--shadow-color); text-align: left; position: relative; }
+        .img-wrapper { position: relative; width: 100%; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+              .card img { width: 100%; display: block; max-height: 180px; object-fit: cover; }
+        .tags-row { display: flex; gap: 6px; margin-top: 12px; margin-bottom: 12px; align-items: center; }
+        .tag { font-size: 9px; font-weight: bold; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; border: 1px solid var(--border-color); color: #b172ff; background: rgba(133,68,255,0.1); }
+              .tag-new { background: linear-gradient(135deg, #ff00ff, #8544ff); color: #ffffff; border: none; box-shadow: 0 0 10px rgba(133,68,255,0.5); }
+        .author-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 8px; }
+              .author-info { display: flex; align-items: center; gap: 8px; }
+        .author-avatar { width: 26px; height: 28px; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+              .author-name { font-size: 12px; font-weight: bold; text-transform: uppercase; color: #fff; letter-spacing: 0.5px; }
+        .prefix-tag { font-size: 9px; font-weight: bold; padding: 4px 10px; border-radius: 8px; text-transform: uppercase; border: 1px solid rgba(0,255,102,0.3); color: #00ff66; background: rgba(0,255,102,0.05); }
+              .card h3 { margin: 5px 0 6px 0; font-size: 16px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card p { font-size: 11px; color: #8e929e; margin: 0 0 15px 0; line-height: 1.5; text-transform: none; }
+        .stats-row { display: flex; gap: 20px; margin-bottom: 14px; padding-left: 2px; }
+              .stat-item { font-size: 12px; font-weight: bold; color: #a3a7b5; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .btn { display: block; padding: 14px; border-radius: 16px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; font-size: 13px; letter-spacing: 0.5px; width: 100%; box-sizing: border-box; text-align: center; background: linear-gradient(135deg, #8544ff, #ff00ff); color: #fff; box-shadow: 0 6px 20px rgba(133,68,255,0.3); transition: all 0.2s; text-transform: uppercase; }
+        .btn:active { transform: scale(0.97); }
+              .profile-card { text-align: center; background: rgba(15, 13, 26, 0.4); border: 1px solid var(--border-color); border-radius: 24px; padding: 25px 20px; }
+        .profile-avatar { width: 85px; height: 85px; border-radius: 50%; background: var(--text-gradient); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 900; color: #fff; margin: 0 auto 12px; border: 2px solid var(--border-color); box-shadow: 0 0 25px rgba(133,68,255,0.3); overflow: hidden; position: relative; }
+              .profile-avatar img { width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; border-radius: 50%; }
+        .profile-username-tg { font-size: 13px; color: #8e929e; margin-top: 4px; font-weight: 500; }
+        .profile-name { font-size: 20px; font-weight: 800; margin: 0; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+              .role-badge { display: inline-block; padding: 5px 14px; border-radius: 12px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; color: var(--role-color); border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); margin-top: 8px; }
+        .role-owner { background: linear-gradient(270deg, #ff00ff, #8544ff, #ff00ff); background-size: 400% 400%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: textFlow 6s ease infinite; border: 1px solid #8544ff; text-shadow: 0 0 8px rgba(133,68,255,0.4); }
+              .category-overlay-window { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #07050f; z-index: 15000; overflow-y: auto; padding: 20px 15px 120px; box-sizing: border-box; }
+        .overlay-close-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px; }
+        .overlay-title { font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
+              .overlay-close-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: #fff; border-radius: 50%; width: 36px; height: 34px; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .stats-list-vertical { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; text-align: left; }
+              .stat-line-item { background: rgba(10,10,15,0.4); border: 1px solid var(--border-color); padding: 14px 16px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .stat-line-lbl { font-size: 12px; color: #737780; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
+        .stat-line-val { font-size: 15px; font-weight: 900; color: #fff; }
+              .nav-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 65px; background: rgba(10, 8, 20, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border-color); border-radius: 20px; display: flex; justify-content: space-around; align-items: center; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        .nav-item { color: #525663; background: none; border: none; flex: 1; height: 100%; font-size: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; }
+              .nav-item.active { color: #ffffff !important; background: rgba(133,68,255,0.08); border-radius: 16px; height: 85%; margin: 0 5px; border: 1px solid rgba(133,68,255,0.3); box-shadow: inset 0 0 10px rgba(133,68,255,0.1); }
+        .platform-stats-wrapper-box { background: rgba(15, 13, 26, 0.4); border: 1px solid var(--border-color); border-radius: 24px; padding: 20px 15px; text-align: left; }
+              .platform-title-row-lbl { font-size: 18px; font-weight: 900; margin: 0 0 15px 5px; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .platform-grid-layout-box { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .platform-stat-item-card { background: rgba(255,255,255,0.01); border: 1px solid rgba(133, 68, 255, 0.08); border-radius: 20px; padding: 20px 10px; text-align: center; }
+              .platform-stat-digit-val { font-size: 24px; font-weight: 900; color: #b172ff; margin-bottom: 2px; text-shadow: 0 0 10px rgba(177,114,255,0.2); }
+        .platform-stat-sub-txt { font-size: 9px; font-weight: bold; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.5px; }
+        .tab-content { display: none; }
+              .tab-content.active { display: block; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(3,2,10,0.9); z-index: 20000; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        .sort-modal-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 22000; align-items: flex-end; }
+              .sort-modal-content { width: 100%; background: #12101e; border-top: 1px solid var(--border-color); border-radius: 24px 24px 0 0; padding: 25px 20px; box-sizing: border-box; text-align: left; transform: translateY(100%); transition: transform 0.3s ease; }
+        .sort-modal-container.active .sort-modal-content { transform: translateY(0); }
+              .sort-option-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 5px; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; }
+        .sort-option-text { font-size: 15px; font-weight: bold; color: #fff; }
+        .sort-radio-circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #525663; display: flex; align-items: center; justify-content: center; }
+              .sort-option-row.active .sort-radio-circle { border-color: #8544ff; }
+        .sort-option-row.active .sort-radio-circle::after { content: ''; width: 10px; height: 10px; background: #8544ff; border-radius: 50%; display: block; }
+        .m-block-screen { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #040408; z-index: 25000; align-items: center; justify-content: center; padding: 25px; box-sizing: border-box; }
+              .modal-content { background: #0d0e12; border: 1px solid #333; border-radius: 24px; padding: 25px; width: 100%; max-width: 360px; text-align: left; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5); box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div class="stars-container" id="stars-box"></div>
+    <div id="m-lock-window" class="m-block-screen">
+        <div class="modal-content" style="text-align:center; max-width:340px; border-color:#ff3333;">
+            <h3 style="color:#ff3333; margin-top:0; font-size:22px; font-weight:900;">🛑 ТЕХ. РАБОТЫ</h3>
+            <p style="font-size:14px; color:#bbb; line-height:1.7; text-transform:none;">Сейчас ведутся работы над сервером сайта!<br><br>Обновление сервера и дизайна лаунчера!<br><br><span style="color:#666; font-size:12px;">Окно заблокировано автоматически на время тех. работ.</span></p>
+        </div>
+    </div>
+        <input type="file" id="hidden-avatar-input" style="display:none;" accept="image/*">
+    <div id="sort-modal-container" class="sort-modal-container"><div id="sort-modal-overlay-bg" style="position:absolute; top:0; left:0; width:100%; height:100%;"></div><div class="sort-modal-content"><div class="sort-option-row active" data-sort="new"><span class="sort-option-text">Новые</span><div class="sort-radio-circle"></div></div><div class="sort-option-row" data-sort="likes"><span class="sort-option-text">По лайкам</span><div class="sort-radio-circle"></div></div><div class="sort-option-row" data-sort="downloads"><span class="sort-option-text">По скачиваниям</span><div class="sort-radio-circle"></div></div></div></div>
+        <div id="update-modal" class="modal">
+        <div class="modal-content">
+            <button id="btn-close-update-modal" class="modal-close" style="position: absolute; top: 18px; right: 18px; background: none; border: none; color: #666; font-size: 22px; cursor: pointer; font-weight: bold;">×</button>
+            <h3 style="margin-top:0;" class="flow-text">ОБНОВЛЕНИЕ 1.1745</h3>
+            <div style="font-size:13px; color:#aaa; line-height:1.7; font-weight: bold;">
+                • Чистый и легкий запуск: Полностью удален зависающий экран ТГ-подписки!<br>
+                • Владельцу asma выдан неоновый перелив, для hinata настроен статус Админ.<br>
+                • Нарезка пересобрана ровно на 65 частей столбиком под идеальное копирование.<br>
+                • Полный фикс загрузки Аватарок из галереи и фиксация Ника навсегда.
+            </div>
+        </div>
+        </div>
+            <div id="welcome-start-modal" class="modal" style="display:none;">
+        <div class="modal-content" style="text-align:center;">
+            <h3 class="flow-text" style="margin-top:0; font-size:20px;">WELCOME! HINATA SBORKS</h3>
+            <p style="font-size:13px; color:#bbb; line-height:1.6; text-transform:none; text-align:left;">Данный сайт был создан чтобы вы смогли скачивать наши сборки под любой вкус и цвет!<br><br>Данный сайт так же будет обновляться и не стоять на месте как другие сайты!</p>
+            <button id="btn-close-welcome-modal" class="btn" style="padding:10px; margin-top:10px; font-size:12px;">ПОЕХАЛИ</button>
+        </div>
+            </div>
+                <div class="header-row"><h1 class="logo-title flow-text">Hinata Sborks</h1></div>
+    <div class="version-text">ВЕРСИЯ САЙТА 1.1745 (65-PART EDITION)</div>
+    <div id="tab-catalog" class="tab-content active">
+        <div class="search-container"><input type="text" class="search-input" id="search-box" placeholder="Поиск сборок..."><button id="btn-trigger-sort" class="search-sort-btn">⚙️</button></div>
+        <div class="categories-row"><button class="cat-box-btn active" data-cat="all">Все</button><button class="cat-box-btn" data-cat="half">ПолуСборки</button><button class="cat-box-btn" data-cat="full">ФуллСборки</button></div>
+                <div id="all-cards-container">
+            <div class="card mod-card" data-id="mod2" data-name="kevin purple assembly">
+                <div class="img-wrapper"><img src="https://github.io" onerror="this.src='https://placeholder.com'" alt="Превью"></div>
+                <div class="tags-row"><span class="tag tag-new">NEW</span><span class="tag">Фулл сборка</span></div>
+                <div class="author-row"><div class="author-info"><div class="author-avatar">👤</div><div class="author-name">PHOENIX MODS</div></div><div class="prefix-tag">ИГРОК</div></div>
+                <h3>KEVIN PURPLE ASSEMBLY</h3><p>Эксклюзивное тёмное небо, кастомный фиолетовый интерфейс, замена всех скинов банд, новые звуки оружия и maximal FPS UP.</p>
+                <div class="stats-row"><div class="stat-item btn-like-trigger" data-mid="mod2">❤️ <span id="like-count-mod2">0</span></div><div class="stat-item">📥 <span class="download-counter-kevin" id="dl-count-mod2">0</span></div></div>
+                <button class="btn btn-download-trigger" data-modid="kevin_purple" data-mid="mod2">Скачать</button>
+            </div>
+                        <div class="card mod-card" data-id="mod3" data-name="litvin duelyant">
+                <div class="img-wrapper"><img src="https://placeholder.com" alt="Превью"></div>
+                <div class="tags-row"><span class="tag tag-new">NEW</span><span class="tag">Полу сборка</span></div>
+                <div class="author-row"><div class="author-info"><div class="author-avatar">👑</div><div class="author-name">asma</div></div><div class="prefix-tag">ВЛАДЕЛЕЦ</div></div>
+                <h3>LITVIN DUELYANT</h3><p>Бомжиха -> Кастомизированный Литвин, старые звуки стрельбы, звуки попадания типа стук по лицу, красивое приятное небо, кровь, фиолетовые звезды.</p>
+                <div class="stats-row"><div class="stat-item btn-like-trigger" data-mid="mod3">❤️ <span id="like-count-mod3">0</span></div><div class="stat-item">📥 <span class="download-counter-litvin" id="dl-count-mod3">0</span></div></div>
+                <button class="btn btn-download-trigger" data-modid="litvin_duelyant" data-mid="mod3">Скачать</button>
+                        </div>
+                               <div class="card mod-card" data-id="mod4" data-name="wonderfull assembly">
+                <div class="img-wrapper"><img src="https://placeholder.com" alt="Превью"></div>
+                <div class="tags-row"><span class="tag tag-new">NEW</span><span class="tag">Фулл сборка</span></div>
+                <div class="author-row"><div class="author-info"><div class="author-avatar">👑</div><div class="author-name">asma</div></div><div class="prefix-tag">ВЛАДЕЛЕЦ</div></div>
+                <h3>WONDERFULL ASSEMBLY</h3><p>Бомжиха - Каст кевин (блендер), кровь, таймсус, атмосфера (темная), растянутый прицел, звуки стрельбы, звуки попаданий, кастом звук перезарядки, худ, кнопки, нету листы, прозрачные капты.</p>
+                <div class="stats-row"><div class="stat-item btn-like-trigger" data-mid="mod4">❤️ <span id="like-count-mod4">0</span></div><div class="stat-item">📥 <span class="download-counter-wonder" id="dl-count-mod4">0</span></div></div>
+                <button class="btn btn-download-trigger" data-modid="wonderfull_assembly" data-mid="mod4">Скачать</button>
+            </div>
+        </div>
+    </div>
+      <div id="overlay-half" class="category-overlay-window"><div class="overlay-close-header"><span class="overlay-title flow-text">ПолуСборки</span><button id="close-half-btn" class="overlay-close-btn">×</button></div><div id="half-overlay-content"></div></div>
+    <div id="overlay-full" class="category-overlay-window"><div class="overlay-close-header"><span class="overlay-title flow-text">ФуллСборки</span><button id="close-full-btn" class="overlay-close-btn">×</button></div><div id="full-overlay-content"></div></div>
+        <div id="tab-profile" class="tab-content"><div class="profile-card"><div class="profile-avatar" id="user-avatar"><img src="" id="user-avatar-img"><span id="user-avatar-letter-span">👤</span></div><div class="profile-name" id="user-name">Игрок</div><div style="margin-bottom:12px;"><span class="role-badge" id="role-text">Игрок</span></div><div class="custom-design-box" id="nick-setup-container"><span class="design-title">⚙️ Авторизация Платформы</span><div class="profile-input-row"><input type="text" id="profile-nick-input" class="profile-input-field" placeholder="Введите ваш Ник"><button id="btn-save-custom-nick" class="profile-save-btn">Войти</button></div></div>
+        <div class="custom-design-box"><span class="design-title">🎨 Кастом дизайн сайта (8 темы)</span><div class="theme-circle-grid"><button class="circle-t-btn c-btn-mono" data-theme="mono"></button><button class="circle-t-btn c-btn-purple" data-theme="purple"></button><button class="circle-t-btn c-btn-emerald" data-theme="emerald"></button><button class="circle-t-btn c-btn-fire" data-theme="fire"></button><button class="circle-t-btn c-btn-aqua" data-theme="aqua"></button><button class="circle-t-btn c-btn-gold" data-theme="gold"></button><button class="circle-t-btn c-btn-cyber" data-theme="cyber"></button><button class="circle-t-btn c-btn-ruby" data-theme="ruby"></button></div><div class="brightness-slider-row" style="margin-top:10px; padding: 0 4px;"><span class="brightness-slider-lbl">Ярость интерфейса</span><input type="range" id="brightness-slider-element" class="brightness-slider" min="15" max="100" value="100"></div></div>
+        <div class="stats-list-vertical"><div class="stat-line-item"><span class="stat-line-lbl">❤️ Поставлено лайков</span><span class="stat-line-val" id="profile-likes-total">0</span></div><div class="stat-line-item"><span class="stat-line-lbl">📥 Успешных загрузок</span><span class="stat-line-val" id="profile-downloads-total">0</span></div><div class="stat-line-item"><span class="stat-line-lbl">📁 Доступно сборок</span><span class="stat-line-val">3</span></div></div></div></div>
+            <div id="tab-admin" class="tab-content"><div class="platform-stats-wrapper-box"><div class="platform-title-row-lbl flow-text">Статистика платформы</div><div class="platform-grid-layout-box"><div class="platform-stat-item-card"><div class="platform-stat-digit-val" id="p-hud-total-users">0</div><div class="platform-stat-sub-txt">пользователей</div></div><div class="platform-stat-item-card"><div class="platform-stat-digit-val" style="color:#00ff66;" id="p-hud-live-online">0</div><div class="platform-stat-sub-txt">онлайн</div></div><div class="platform-stat-item-card"><div class="platform-stat-digit-val" id="p-hud-total-downloads">0</div><div class="platform-stat-sub-txt">скачиваний</div></div><div class="platform-stat-item-card"><div class="platform-stat-digit-val" id="p-hud-total-mods">3</div><div class="platform-stat-sub-txt">сборок</div></div></div></div></div>
+                <div class="nav-bar"><button id="nav-btn-updates" class="nav-item">❓<span>Обновы</span></button><button id="nav-btn-catalog" class="nav-item active">📁<span>Сборки</span></button><button id="nav-btn-profile" class="nav-item">👤<span>Профиль</span></button><button id="nav-btn-admin" class="nav-item admin-only-btn-nav">⚙️<span>Админ</span></button></div>
+                    <script>
+        const SUPABASE_URL = "https://supabase.co";
+        const SUPABASE_KEY = "sb_secret_tH3X_vDhsAXnd5IYLM49OQ_Od7L2sU6";
+        let globalDownloads = 0, userDownloads = 0, isOwnerSession = false, isServerLockedGlobal = false;
+        let activeThemeBg = "linear-gradient(135deg, #02000a, #0d0d11, #02000a)", registeredGlobalNicks = [];
+                              function createStars() { const box = document.getElementById('stars-box'); if(!box) return; box.innerHTML = ''; for(let i=0; i<45; i++) { let star = document.createElement('div'); star.className = 'star'; star.style.width = (Math.random() * 3) + 'px'; star.style.height = star.style.width; star.style.left = (Math.random() * 100) + '%'; star.style.top = (Math.random() * 100) + '%'; star.style.animationDuration = (Math.random() * 3 + 2) + 's'; box.appendChild(star); } }
+                              async function sendPing() { const user = localStorage.getItem('h_username'); if(!user) return; await fetch(SUPABASE_URL + '/online', { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json", "Prefer": "resolution=merge-duplicates" }, body: JSON.stringify({ username: user, last_ping: new Date().toISOString() }) }); }
+                              async function syncWithServer() {
+            sendPing();
+            const res = await fetch(SUPABASE_URL + '/stats?select=*', { headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY } });
+            if (res.ok) { const data = await res.json(); if(data && data.length > 0) { globalDownloads = data.downloads || 0; document.getElementById('p-hud-total-downloads').innerText = globalDownloads; isServerLockedGlobal = data.maintenance || false; applyServerLockState(isServerLockedGlobal); } }
+                                  const usersRes = await fetch(SUPABASE_URL + '/users?select=username', { headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY } });
+            if(usersRes.ok) { const usersData = await usersRes.json(); if(usersData) { registeredGlobalNicks = usersData.map(u => u.username.toLowerCase()); document.getElementById('p-hud-total-users').innerText = registeredGlobalNicks.length; } }
+                                  const onlineRes = await fetch(SUPABASE_URL + '/online?select=username', { headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY } });
+            if(onlineRes.ok) { const onlineData = await onlineRes.json(); document.getElementById('p-hud-live-online').innerText = Math.max(1, onlineData.length); }
+                           for(let i = 2; i <= 4; i++) { const lRes = await fetch(SUPABASE_URL + '/likes?mod_id=eq.mod' + i, { headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY } }); if(lRes.ok) { const lData = await lRes.json(); const countSpan = document.getElementById('like-count-mod' + i); if(countSpan) countSpan.innerText = lData.length; } }
+                              }
+                                             function applyServerLockState(isLocked) { const currentNick = (localStorage.getItem('h_username') || '').toLowerCase(); const lockBox = document.getElementById('m-lock-window'); if(isLocked) { if(currentNick === 'asma' || currentNick === 'hinata') { if(lockBox) lockBox.style.display = 'none'; } else { if(lockBox) lockBox.style.display = 'flex'; } } else { if(lockBox) lockBox.style.display = 'none'; } }
+                              function loadSavedSession() {
+            createStars(); document.getElementById('p-hud-total-downloads').innerText = globalDownloads; document.getElementById('profile-downloads-total').innerText = userDownloads;
+            if(!localStorage.getItem('h_welcome_seen')) { document.getElementById('welcome-start-modal').style.display = 'flex'; localStorage.setItem('h_welcome_seen', 'true'); }
+            const savedNick = localStorage.getItem('h_username');
+                                            if(savedNick) { document.getElementById('user-name').innerText = savedNick; setTwoLetterAvatar(savedNick); document.getElementById('nick-setup-container').style.display = 'none'; checkAdminRights(savedNick); }
+            const savedImg = localStorage.getItem('h_user_avatar'); if(savedImg) { const avatarImg = document.getElementById('user-avatar-img'); avatarImg.src = savedImg; avatarImg.style.display = 'block'; document.getElementById('user-avatar-letter-span').style.display = 'none'; }
+            const savedTheme = localStorage.getItem('h_launcher_theme') || 'mono'; changeTheme(savedTheme); syncWithServer(); setInterval(syncWithServer, 10000);
+            initEventListeners();
+        }
+        window.addEventListener('DOMContentLoaded', loadSavedSession);
+                              function setTwoLetterAvatar(nick) { const spanBox = document.getElementById('user-avatar-letter-span'); if(nick.length >= 2) { spanBox.innerText = nick.substring(0, 2).toUpperCase(); } else { spanBox.innerText = nick.charAt(0).toUpperCase(); } }
+        async function loadAvatarFromGallery(input) { if (input.files && input.files) { const reader = new FileReader(); reader.onload = async function(e) { const imgData = e.target.result; localStorage.setItem('h_user_avatar', imgData); document.getElementById('user-avatar-img').src = imgData; document.getElementById('user-avatar-img').style.display = 'block'; document.getElementById('user-avatar-letter-span').style.display = 'none'; const cUser = localStorage.getItem('h_username') || "Игрок"; await fetch(SUPABASE_URL + '/users?username=eq.' + cUser, { method: "PATCH", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ avatar_url: imgData }) }); }; reader.readAsDataURL(input.files); } }
+                             async function saveCustomNick() { let nick = document.getElementById('profile-nick-input').value.trim(); if(nick === '') { Telegram.WebApp.showAlert('Введите ваш Никнейм!'); return; } let lowNick = nick.toLowerCase(); if(registeredGlobalNicks.includes(lowNick)) { Telegram.WebApp.showAlert('Данный никнейм уже занят на сервере!'); return; } localStorage.setItem('h_username', nick); document.getElementById('user-name').innerText = nick; setTwoLetterAvatar(nick); document.getElementById('nick-setup-container').style.display = 'none'; await fetch(SUPABASE_URL + '/users', { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ username: nick }) }); checkAdminRights(nick); syncWithServer(); }
+                              function checkAdminRights(nick) { let lowNick = nick.toLowerCase(); if(lowNick === 'hinata' || lowNick === 'asma') { isOwnerSession = true; const rText = document.getElementById('role-text'); if(rText) { if(lowNick === 'asma') { rText.innerText = 'Владелец'; rText.className = 'role-badge role-owner'; } else if(lowNick === 'hinata') { rText.innerText = 'Админ'; rText.className = 'role-badge'; rText.style.setProperty('color', '#00f0ff', 'important'); rText.style.setProperty('border-color', '#00f0ff', 'important'); } } const adminBtn = document.getElementById('nav-btn-admin'); if(adminBtn) { adminBtn.style.setProperty('display', 'flex', 'important'); adminBtn.className = 'nav-item'; } } }
+                              async function downloadMod(modId, mid) { globalDownloads += 1; userDownloads += 1; localStorage.setItem('h_global_dl', globalDownloads); localStorage.setItem('h_user_dl', userDownloads); document.getElementById('profile-downloads-total').innerText = userDownloads; await fetch(SUPABASE_URL + '/stats?id=eq.1', { method: "PATCH", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ downloads: globalDownloads }) }); document.getElementById('p-hud-total-downloads').innerText = globalDownloads; window.location.href = "https://t.me" + modId; }
+        function openOverlay(type) { const overlay = document.getElementById('overlay-' + type); const contentBox = document.getElementById(type + '-overlay-content'); contentBox.innerHTML = ''; document.querySelectorAll('#all-cards-container .mod-card').forEach(card => { const tagText = card.querySelector('.tag:not(.tag-new)').innerText.toLowerCase(); if((type === 'half' && tagText.includes('полу')) || (type === 'full' && tagText.includes('фулл'))) { contentBox.innerHTML += card.outerHTML; } }); if(overlay) overlay.style.display = 'block'; }
+        function closeOverlay(type) { const overlay = document.getElementById('overlay-' + type); if(overlay) overlay.style.display = 'none'; }
+        function switchTab(tabId) { document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active')); const targetTab = document.getElementById('tab-' + tabId); if(targetTab) targetTab.classList.add('active'); const targetNav = document.getElementById('nav-btn-' + tabId); if(targetNav) targetNav.classList.add('active'); }
+        function filterSearch() { const query = document.getElementById('search-box').value.toLowerCase(); document.querySelectorAll('#all-cards-container .mod-card').forEach(card => { const name = card.getAttribute('data-name').toLowerCase(); card.style.display = name.includes(query) ? 'block' : 'none'; }); }
+        async function toggleLike(btn, mid) { const countSpan = document.getElementById('like-count-' + mid); if(!countSpan) return; const isLiked = localStorage.getItem('h_liked_' + mid) === 'true'; const user = localStorage.getItem('h_username') || "Anon"; if(!isLiked) { localStorage.setItem('h_liked_' + mid, 'true'); btn.parentElement.classList.add('liked'); btn.parentElement.style.color = '#00ff66'; await fetch(SUPABASE_URL + '/likes', { method: "POST", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ mod_id: mid, username: user }) }); } else { localStorage.setItem('h_liked_' + mid, 'false'); btn.parentElement.classList.remove('liked'); btn.parentElement.style.color = '#fff'; await fetch(SUPABASE_URL + '/likes?mod_id=eq.' + mid + '&username=eq.' + user, { method: "DELETE", headers: { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY } }); } syncWithServer(); }
+        function applyBrightness(val) { const opacityFactor = (100 - val) / 100; document.documentElement.style.setProperty('--bg-dark-overlay', 'rgba(0, 0, 0, ' + (opacityFactor * 0.85) + ')'); }
+                              function changeTheme(theme) {
+            const root = document.documentElement; localStorage.setItem('h_launcher_theme', theme);
+            if(theme === 'purple') { activeThemeBg = "linear-gradient(135deg, #05000f, #1b003a, #05000f)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #b172ff, #440099, #b172ff)'); root.style.setProperty('--border-color', 'rgba(177, 114, 255, 0.25)'); root.style.setProperty('--tag-color', '#b172ff'); root.style.setProperty('--role-color', '#b172ff'); root.style.setProperty('--btn-text-color', '#ffffff'); }
+            else if(theme === 'emerald') { activeThemeBg = "linear-gradient(135deg, #000a02, #00360c, #000a02)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #00ff66, #006622, #00ff66)'); root.style.setProperty('--border-color', 'rgba(0, 255, 102, 0.25)'); root.style.setProperty('--tag-color', '#00ff66'); root.style.setProperty('--role-color', '#00ff66'); root.style.setProperty('--btn-text-color', '#000000'); }
+            else if(theme === 'fire') { activeThemeBg = "linear-gradient(135deg, #0f0000, #440000, #0f0000)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ff3737, #800000, #ff3737)'); root.style.setProperty('--border-color', 'rgba(255, 55, 55, 0.25)'); root.style.setProperty('--tag-color', '#ff3737'); root.style.setProperty('--role-color', '#ff3737'); root.style.setProperty('--btn-text-color', '#ffffff'); }
+            else if(theme === 'aqua') { activeThemeBg = "linear-gradient(135deg, #000c12, #003e4d, #000c12)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #00f0ff, #004e66, #00f0ff)'); root.style.setProperty('--border-color', 'rgba(255, 0, 240, 0.25)'); root.style.setProperty('--tag-color', '#00f0ff'); root.style.setProperty('--role-color', '#00f0ff'); root.style.setProperty('--btn-text-color', '#000000'); }
+            else if(theme === 'gold') { activeThemeBg = "linear-gradient(135deg, #0f0b00, #423000, #0f0b00)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffcc00, #664c00, #ffcc00)'); root.style.setProperty('--border-color', 'rgba(255, 204, 0, 0.25)'); root.style.setProperty('--tag-color', '#ffcc00'); root.style.setProperty('--role-color', '#ffcc00'); root.style.setProperty('--btn-text-color', '#000000'); }
+            else if(theme === 'cyber') { activeThemeBg = "linear-gradient(135deg, #0d001a, #2b0040, #000833)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ff00ff, #001fff, #ff00ff)'); root.style.setProperty('--border-color', 'rgba(255, 0, 255, 0.25)'); root.style.setProperty('--tag-color', '#ff00ff'); root.style.setProperty('--role-color', '#ff00ff'); root.style.setProperty('--btn-text-color', '#ffffff'); }
+            else if(theme === 'ruby') { activeThemeBg = "linear-gradient(135deg, #100003, #3a000a, #1a0005)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ff3333, #330000, #ff3333)'); root.style.setProperty('--border-color', 'rgba(168, 0, 0, 0.25)'); root.style.setProperty('--tag-color', '#ff3333'); root.style.setProperty('--role-color', '#ff3333'); root.style.setProperty('--btn-text-color', '#ffffff'); }
+            else { activeThemeBg = "linear-gradient(135deg, #02000a, #0d0d11, #02000a)"; root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffffff, #555555, #ffffff)'); border-color: rgba(255, 255, 255, 0.08); root.style.setProperty('--tag-color', '#aaa'); root.style.setProperty('--role-color', '#00ff66'); root.style.setProperty('--btn-text-color', '#000000'); }
+            document.body.style.setProperty('background', activeThemeBg, 'important'); const slider = document.getElementById('brightness-slider-element'); applyBrightness(slider ? slider.value : 100);
+        }
+        function toggleSortModal() { const m = document.getElementById('sort-modal-container'); if(m) m.classList.toggle('active'); }
+        function selectSortOption(row) { document.querySelectorAll('.sort-option-row').forEach(r => r.classList.remove('active')); row.classList.add('active'); const mode = row.getAttribute('data-sort'); toggleSortGlobal(mode); toggleSortModal(); }
+        function toggleSortGlobal(mode) { window.Telegram.WebApp.showAlert("Сортировка изменена: " + mode); }
+        function initEventListeners() {
+            const closeMod = document.getElementById('btn-close-update-modal'); if(closeMod) closeMod.addEventListener('click', function(){ document.getElementById('update-modal').style.display='none'; });
+            const closeWel = document.getElementById('btn-close-welcome-modal'); if(closeWel) closeWel.addEventListener('click', function(){ document.getElementById('welcome-start-modal').style.display='none'; });
+            const bSave = document.getElementById('btn-save-custom-nick'); if(bSave) bSave.addEventListener('click', saveCustomNick);
+            const avatarDiv = document.getElementById('user-avatar'); if(avatarDiv) avatarDiv.addEventListener('click', function(){ document.getElementById('hidden-avatar-input').click(); });
+            const hiddenAv = document.getElementById('hidden-avatar-input'); if(hiddenAv) hiddenAv.addEventListener('change', function(){ loadAvatarFromGallery(this); });
+            const bSlider = document.getElementById('brightness-slider-element'); if(bSlider) bSlider.addEventListener('input', function(){ applyBrightness(this.value); });
+            const btnSortTrigger = document.getElementById('btn-trigger-sort'); if(btnSortTrigger) btnSortTrigger.addEventListener('click', toggleSortModal);
+            const overlaySortClose = document.getElementById('sort-modal-overlay-bg'); if(overlaySortClose) overlaySortClose.addEventListener('click', toggleSortModal);
+            document.getElementById('nav-btn-updates').addEventListener('click', function(){ document.getElementById('update-modal').style.display='flex'; });
+            document.getElementById('nav-btn-catalog').addEventListener('click', function(){ switchTab('catalog'); });
+            document.getElementById('nav-btn-profile').addEventListener('click', function(){ switchTab('profile'); });
+            document.getElementById('nav-btn-admin').addEventListener('click', function(){ switchTab('admin'); });
+            document.querySelectorAll('.theme-circle-grid .circle-t-btn').forEach(btn => { btn.addEventListener('click', function(){ changeTheme(this.getAttribute('data-theme')); }); });
+            document.querySelectorAll('.btn-like-trigger').forEach(btn => { btn.addEventListener('click', function(){ toggleLike(this, this.getAttribute('data-mid')); }); });
+            document.querySelectorAll('.btn-download-trigger').forEach(btn => { btn.addEventListener('click', function(){ downloadMod(this.getAttribute('data-modid'), this.getAttribute('data-mid')); }); });
+            document.querySelectorAll('.sort-option-row').forEach(row => { row.addEventListener('click', function(){ selectSortOption(this); }); });
+            document.querySelectorAll('.categories-row .cat-box-btn').forEach(btn => { btn.addEventListener('click', function(){ document.querySelectorAll('.categories-row .cat-box-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); openOverlay(this.getAttribute('data-cat')); }); });
+        }
+    </script>
+</body>
+</html>
