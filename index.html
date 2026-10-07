@@ -465,7 +465,19 @@
             } else { 
                 activeThemeBg = "linear-gradient(135deg, #02000a, #0d0d11, #02000a)"; 
                 root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffffff, #555555, #ffffff)'); 
-                            function initEventListeners() {
+                            
+                        function toggleSortModal() {
+            const m = document.getElementById('sort-modal-container');
+            if(m) m.classList.toggle('active');
+        }
+        function selectSortOption(row) {
+            document.querySelectorAll('.sort-option-row').forEach(r => r.classList.remove('active'));
+            row.classList.add('active');
+            const mode = row.getAttribute('data-sort');
+            toggleSortModal();
+            window.Telegram.WebApp.showAlert("Сортировка изменена: " + mode);
+        }
+        function initEventListeners() {
             const closeMod = document.getElementById('btn-close-update-modal'); if(closeMod) closeMod.addEventListener('click', function(){ document.getElementById('update-modal').style.display='none'; });
             const closeWel = document.getElementById('btn-close-welcome-modal'); if(closeWel) closeWel.addEventListener('click', function(){ document.getElementById('welcome-start-modal').style.display='none'; });
             const bHalf = document.getElementById('btn-overlay-half'); if(bHalf) bHalf.addEventListener('click', function(){ openOverlay('half'); });
@@ -479,21 +491,6 @@
             
             const btnSortTrigger = document.getElementById('btn-trigger-sort'); if(btnSortTrigger) btnSortTrigger.addEventListener('click', toggleSortModal);
             const overlaySortClose = document.getElementById('sort-modal-overlay-bg'); if(overlaySortClose) overlaySortClose.addEventListener('click', toggleSortModal);
-            
-            const btnVerify = document.getElementById('btn-tg-verify');
-            if(btnVerify) {
-                btnVerify.addEventListener('click', function() {
-                    this.innerText = "⏳ Проверка...";
-                    setTimeout(() => {
-                        const gate = document.getElementById('tg-subscription-gate');
-                        if(gate) {
-                            gate.style.setProperty('display', 'none', 'important');
-                        }
-                        localStorage.setItem('h_tg_subscribed', 'true');
-                        loadSavedSession();
-                    }, 800);
-                });
-            }
 
             document.getElementById('nav-btn-updates').addEventListener('click', function(){ document.getElementById('update-modal').style.display='flex'; });
             document.getElementById('nav-btn-catalog').addEventListener('click', function(){ switchTab('catalog'); });
