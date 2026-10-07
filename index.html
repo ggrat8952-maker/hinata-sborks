@@ -465,7 +465,7 @@
             } else { 
                 activeThemeBg = "linear-gradient(135deg, #02000a, #0d0d11, #02000a)"; 
                 root.style.setProperty('--text-gradient', 'linear-gradient(270deg, #ffffff, #555555, #ffffff)'); 
-                  function initEventListeners() {
+                          function initEventListeners() {
             const closeMod = document.getElementById('btn-close-update-modal'); if(closeMod) closeMod.addEventListener('click', function(){ document.getElementById('update-modal').style.display='none'; });
             const closeWel = document.getElementById('btn-close-welcome-modal'); if(closeWel) closeWel.addEventListener('click', function(){ document.getElementById('welcome-start-modal').style.display='none'; });
             const bHalf = document.getElementById('btn-overlay-half'); if(bHalf) bHalf.addEventListener('click', function(){ openOverlay('half'); });
@@ -495,10 +495,12 @@
                             window.Telegram.WebApp.showAlert("✅ Подписка успешно подтверждена! Добро пожаловать.");
                             loadSavedSession();
                         } else {
-                            this.innerText = "❌ Проверить";
-                            window.Telegram.WebApp.showAlert("🛑 Вы не подписаны на наш Telegram-канал! Пожалуйста, подпишитесь, чтобы открыть доступ к сборкам.");
+                            this.innerText = "✅ Проверить";
+                            document.getElementById('tg-subscription-gate').style.setProperty('display', 'none', 'important');
+                            loadSavedSession();
                         }
                     } catch(e) {
+                        this.innerText = "✅ Проверить";
                         document.getElementById('tg-subscription-gate').style.setProperty('display', 'none', 'important');
                         loadSavedSession();
                     }
@@ -513,18 +515,8 @@
             document.querySelectorAll('.theme-circle-grid .circle-t-btn').forEach(btn => { btn.addEventListener('click', function(){ changeTheme(this.getAttribute('data-theme')); }); });
             document.querySelectorAll('.btn-like-trigger').forEach(btn => { btn.addEventListener('click', function(){ toggleLike(this, this.getAttribute('data-mid')); }); });
             document.querySelectorAll('.btn-download-trigger').forEach(btn => { btn.addEventListener('click', function(){ downloadMod(this.getAttribute('data-modid'), this.getAttribute('data-mid')); }); });
-            document.querySelectorAll('.sort-option-row').forEach(row => { btn.addEventListener('click', function(){ selectSortOption(this); }); });
+            document.querySelectorAll('.sort-option-row').forEach(row => { row.addEventListener('click', function(){ selectSortOption(this); }); });
         }
     </script>
 </body>
 </html>
-root.style.setProperty('--border-color', 'rgba(255, 255, 255, 0.08)'); 
-                root.style.setProperty('--tag-color', '#aaa'); 
-                root.style.setProperty('--role-color', '#00ff66'); 
-                root.style.setProperty('--btn-text-color', '#000000'); 
-            }
-            document.body.style.setProperty('background', activeThemeBg, 'important'); 
-            const slider = document.getElementById('brightness-slider-element'); 
-            applyBrightness(slider ? slider.value : 100);
-                                  }
-                          
